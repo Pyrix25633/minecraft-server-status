@@ -1,0 +1,41 @@
+body {
+    background-color: #222222;
+    color: #DDDDDD;
+    font-family: 'Quicksand', sans-serif;
+    font-family: 'Roboto Mono', monospace;
+}
+
+div {
+    display: flex;
+    border: 2px solid;
+    margin: 2px;
+    padding: 2px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+}
+
+div.service {
+    width: 190px;
+}
+
+span {
+    margin-right: 2px;
+    margin-left: 2px;
+}
+
+span.status {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+span.on {
+    background-color: rgb(57, 174, 57);
+}
+
+span.off {
+    background-color: rgb(255, 59, 59);
+}
