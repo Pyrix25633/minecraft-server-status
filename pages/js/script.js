@@ -1,15 +1,17 @@
-let hamachiSpan;
-let minecraftServerSpan;
+let hamachiImg;
+let minecraftServerImg;
+let backupUtilityImg;
 
 function onLoad() {
-  hamachiSpan = document.getElementById('hamachi');
-  minecraftServerSpan = document.getElementById('minecraft-server');
+  hamachiImg = document.getElementById('hamachi');
+  minecraftServerImg = document.getElementById('minecraft-server');
+  backupUtilityImg = document.getElementById('backup-utility');
   requestData();
 }
 
 function requestData() {
   $.ajax({
-    url: '/data',
+    url: '/services',
     method: 'GET',
     dataType: 'json',
     success: setServicesStatus,
@@ -19,9 +21,10 @@ function requestData() {
   });
 }
 
-setInterval(requestData, 10000);
+setInterval(requestData, 6000);
 
 function setServicesStatus(data) {
-  hamachiSpan.classList = 'status ' + data['hamachi'];
-  minecraftServerSpan.classList = 'status ' + data['minecraftServer'];
+  hamachiImg.src = './img/' + data.hamachi + '.svg';
+  minecraftServerImg.src = './img/' + data.minecraftServer + '.svg';
+  backupUtilityImg.src = './img/' + data.backupUtility + '.svg';
 }

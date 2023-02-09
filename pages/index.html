@@ -16,9 +16,12 @@
     <body onload="onLoad()">
         <h1>Server Status Page</h1>
         <hr>
-        <h2>Services</h2>
-        <div class="service"><span>Hamachi</span><span class="status on" id="hamachi"></span></div>
-        <div class="service"><span>Minecraft Server</span><span class="status off" id="minecraft-server"></span></div>
+        <div class="container">
+            <h2>Services</h2>
+            <div class="service"><span>Hamachi</span><img src="img/off.svg" class="status" id="hamachi"></div>
+            <div class="service" style="margin-top: 8px;"><span>Minecraft Server</span><img src="img/off.svg" class="status" id="minecraft-server"></div>
+            <div class="service" style="margin-top: 8px;"><span>Backup Utility</span><img src="img/off.svg" class="status" id="backup-utility"></div>
+        </div>
         <hr>
     </body>
 </html>

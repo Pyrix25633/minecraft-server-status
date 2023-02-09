@@ -26,16 +26,28 @@ main.get('/js/script.js', (req, res) => {
 main.get('/img/icon.svg', (req, res) => {
   res.sendFile('./pages/img/icon.svg', {root: __dirname});
 });
+main.get('/img/on.svg', (req, res) => {
+  res.sendFile('./pages/img/on.svg', {root: __dirname});
+});
+main.get('/img/off.svg', (req, res) => {
+  res.sendFile('./pages/img/off.svg', {root: __dirname});
+});
 
-main.get('/data', (req, res) => {
-  console.log(req.body);
-  let data = {hamachi: 'off', minecraftServer: 'off'};
+main.get('/services', (req, res) => {
+  let data = {hamachi:'off', minecraftServer: 'off', backupUtility: 'off'};
   currentProcesses.get((err, processes) => {
-    if(err) return;
     for(let i = 0; i < processes.length; i++) {
       let name = processes[i]['name'];
-      if(name == 'haguichi') data.hamachi = 'on';
+      if(name == 'haguichi') {
+        data.hamachi = 'on';
+      }
+      else if(name.includes('java')) {
+        data.minecraftServer = 'on';
+      }
+      else if(name == 'backup-utility') {
+        data.backupUtility = 'on';
+      }
     }
-  });
-  res.send(data);
+    res.send(data);
+  });  
 });
