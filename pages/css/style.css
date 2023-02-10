@@ -1,31 +1,63 @@
+:root {
+    --color-light: #DDDDDD;
+    --color-dark: #222222;
+}
+
 body {
-    background-color: #222222;
-    color: #DDDDDD;
+    background-color: var(--color-dark);
+    color: var(--color-light);
     font-family: 'Quicksand', sans-serif;
     font-family: 'Roboto Mono', monospace;
-    padding: 0 50px 0 50px;
+    padding: 0 2vw 0 2vw;
+}
+h2 {
+    margin: 0 0 10px 0;
+}
+h3 {
+    margin: 0 0 5px 0;
+}
+hr {
+    color: var(--color-light);
+    margin-bottom: 20px;
+}
+img.icon {
+    width: 33px;
+    height: 33px;
 }
 
 div {
     display: flex;
-    border: 2px solid;
+    border: 2px solid var(--color-light);
+    border-radius: 10px;
     padding: 2px;
     flex-direction: row;
     justify-content: space-between;
     align-content: center;
 }
-
 div.container {
-    border: 0px;
     flex-direction: column;
-    margin-left: 20px
+    border: 2px solid var(--color-light);
+    padding: 10px;
+    width: fit-content;
+    height: min-content;
+}
+div.box {
+    flex-direction: row;
+    align-content: space-between;
+    padding: 0;
+    border: 0;
+}
+div.box.vertical {
+    flex-direction: column;
 }
 
 div.service {
     width: 190px;
     border-radius: 5px;
 }
-
+div.service:not(:first-of-type) {
+    margin-top: 8px;
+}
 img.status {
     margin-right: 2px;
     margin-left: 2px;
@@ -34,4 +66,38 @@ img.status {
     border-radius: 50%;
     margin-top: 2px;
     margin-bottom: 2px;
+}
+
+div#mods {
+    border: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 1460px;
+    padding: 0;
+}
+div.mod {
+    width: 470px;
+    border-radius: 5px;
+}
+div.mod:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)) {
+    margin-top: 8px;
+}
+
+div.resource {
+    height: 100px;
+    border-radius: 7px;
+    align-items: end;
+}
+div.resource:not(:last-of-type) {
+    margin-bottom: 20px;
+}
+div.bar {
+    background-color: var(--color-light);
+    border: 0;
+    padding: 0;
+    width: 20px;
+    border-radius: 3px;
+}
+div.bar:not(:first-of-type) {
+    margin-left: 1px;
 }

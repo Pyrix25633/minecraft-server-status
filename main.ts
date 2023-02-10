@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const currentProcesses = require('current-processes');
+import {ls, ps, top} from './commands';
+
 const main = express();
 const port: number = 4000;
 
@@ -32,22 +33,59 @@ main.get('/img/on.svg', (req, res) => {
 main.get('/img/off.svg', (req, res) => {
   res.sendFile('./pages/img/off.svg', {root: __dirname});
 });
+main.get('/img/services.svg', (req, res) => {
+  res.sendFile('./pages/img/services.svg', {root: __dirname});
+});
+main.get('/img/resources.svg', (req, res) => {
+  res.sendFile('./pages/img/resources.svg', {root: __dirname});
+});
+main.get('/img/mods.svg', (req, res) => {
+  res.sendFile('./pages/img/mods.svg', {root: __dirname});
+});
 
 main.get('/services', (req, res) => {
-  let data = {hamachi:'off', minecraftServer: 'off', backupUtility: 'off'};
-  currentProcesses.get((err, processes) => {
-    for(let i = 0; i < processes.length; i++) {
-      let name = processes[i]['name'];
-      if(name == 'haguichi') {
-        data.hamachi = 'on';
-      }
-      else if(name.includes('java')) {
-        data.minecraftServer = 'on';
-      }
-      else if(name == 'backup-utility') {
-        data.backupUtility = 'on';
-      }
+  let data = {hamachi: 'off', minecraftServer: 'off', backupUtility: 'off'};
+  ps((error, stdout, stderr) => {
+    if(error) {
+      res.sendStatus(404);
+      return;
     }
+    if(stdout.includes('haguichi'))
+      data.hamachi = 'on';
+    if(stdout.includes('minecraft'))
+      data.minecraftServer = 'on';
+    if(stdout.includes('backup-utility'))
+      data.backupUtility = 'on';
     res.send(data);
-  });  
+  });
+});
+
+main.get('/resources', (req, res) => {
+  let data = {cpu: 0, ram: 0};
+  top((error, stdout, stderr) => {
+    let arr = [];
+    stdout.split(' ').forEach((element) => {
+      if(element != '')
+        arr = arr.concat(element);
+    });
+    data.cpu = parseInt((parseFloat(arr[1]) + parseFloat(arr[3])).toFixed(0));
+    data.ram = parseInt((parseFloat(arr[23]) / parseFloat(arr[19]) * 100).toFixed(0));
+    res.send(data);
+  })
+});
+
+main.get('/mods', (req, res) => {
+  let data = {mods: []};
+  ls('/media/admin25633/Drive/server-forge/mods/', (error, stdout, stderr) => {
+    if(error) {
+      res.sendStatus(404);
+      return;
+    }
+    stdout.split('\n').forEach((element) => {
+      if(element.includes('.jar')) {
+        data.mods = data.mods.concat(element.substring(0, element.length - 4));
+      }
+    });
+    res.send(data);
+  });
 });

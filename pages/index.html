@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Index</title>
+        <title>Server Status Page</title>
         <link rel="stylesheet" href="./css/style.css">
         <link rel="icon" type="image/svg" href="./img/icon.svg">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -16,12 +16,49 @@
     <body onload="onLoad()">
         <h1>Server Status Page</h1>
         <hr>
-        <div class="container">
-            <h2>Services</h2>
-            <div class="service"><span>Hamachi</span><img src="img/off.svg" class="status" id="hamachi"></div>
-            <div class="service" style="margin-top: 8px;"><span>Minecraft Server</span><img src="img/off.svg" class="status" id="minecraft-server"></div>
-            <div class="service" style="margin-top: 8px;"><span>Backup Utility</span><img src="img/off.svg" class="status" id="backup-utility"></div>
+        <div class="box">
+            <div class="box vertical">
+                <div class="container">
+                    <div class="box"><h2>Services</h2><img src="./img/services.svg" class="icon"></div>
+                    <div class="service"><span>Hamachi</span><img src="./img/off.svg" class="status" id="hamachi"></div>
+                    <div class="service"><span>Minecraft Server</span><img src="./img/off.svg" class="status" id="minecraft-server"></div>
+                    <div class="service"><span>Backup Utility</span><img src="./img/off.svg" class="status" id="backup-utility"></div>
+                </div>
+                <div class="container">
+                    <div class="box"><h2>Resources</h2><img src="./img/resources.svg" class="icon"></div>
+                    <h3>CPU</h3>
+                    <div class="resource" id="cpu">
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                    </div>
+                    <h3>RAM</h3>
+                    <div class="resource" id="ram">
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                        <div class="bar" style="height: 0px"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="box"><h2>Mods</h2><img src="./img/mods.svg" class="icon"></div>
+                <div id="mods">
+                </div>
+            </div>
         </div>
-        <hr>
     </body>
 </html>
