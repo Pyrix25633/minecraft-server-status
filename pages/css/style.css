@@ -54,6 +54,7 @@ div.box.vertical {
 div.service {
     width: 190px;
     border-radius: 5px;
+    padding-left: 6px;
 }
 div.service:not(:first-of-type) {
     margin-top: 8px;
@@ -69,18 +70,19 @@ img.status {
 }
 
 div#mods {
+    display: grid;
     border: 0;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 1460px;
+    width: fit-content;
+    gap: 6px;
     padding: 0;
+    grid-template-columns: auto auto;
 }
 div.mod {
-    width: 470px;
-    border-radius: 5px;
-}
-div.mod:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)) {
-    margin-top: 8px;
+    width: auto;
+    border-radius: 4px;
+    font-size: 13px;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 div.resource {
