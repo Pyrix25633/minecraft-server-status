@@ -16,6 +16,9 @@ h2 {
 h3 {
     margin: 0 0 5px 0;
 }
+h3:not(:first-of-type) {
+    margin-top: 20px;
+}
 hr {
     color: var(--color-light);
     margin-bottom: 20px;
@@ -23,6 +26,13 @@ hr {
 img.icon {
     width: 33px;
     height: 33px;
+}
+img.icon-big {
+    width: 43px;
+    height: 43px;
+}
+span:not(:first-of-type) {
+    margin-left: 20px;
 }
 
 div {
@@ -47,6 +57,9 @@ div.box {
     padding: 0;
     border: 0;
 }
+div.box.h1 {
+    align-items: center;
+}
 div.box.vertical {
     flex-direction: column;
 }
@@ -69,29 +82,10 @@ img.status {
     margin-bottom: 2px;
 }
 
-div#mods {
-    display: grid;
-    border: 0;
-    width: fit-content;
-    gap: 6px;
-    padding: 0;
-    grid-template-columns: auto auto;
-}
-div.mod {
-    width: auto;
-    border-radius: 4px;
-    font-size: 13px;
-    padding-left: 4px;
-    padding-right: 4px;
-}
-
 div.resource {
     height: 100px;
     border-radius: 7px;
     align-items: end;
-}
-div.resource:not(:last-of-type) {
-    margin-bottom: 20px;
 }
 div.bar {
     background-color: var(--color-light);
@@ -102,4 +96,53 @@ div.bar {
 }
 div.bar:not(:first-of-type) {
     margin-left: 1px;
+}
+
+div#backups {
+    flex-direction: column;
+    border: 0;
+    padding: 0;
+}
+div.backup {
+    width: auto;
+    border-radius: 5px;
+    font-size: 13px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+div.backup:not(:first-of-type) {
+    margin-top: 6px;
+}
+
+div.drive {
+    width: 300px;
+    border-radius: 7px;
+}
+div.bar.horizontal {
+    background-color: var(--color-light);
+    border: 0;
+    padding: 0;
+    height: 20px;
+    border-radius: 3px;
+}
+
+div#mods {
+    display: grid;
+    border: 0;
+    width: fit-content;
+    padding: 0;
+    grid-template-columns: auto auto;
+}
+div.mod {
+    width: auto;
+    border-radius: 5px;
+    font-size: 13px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+div.mod:not(:nth-of-type(1)):not(:nth-of-type(2)) {
+    margin-top: 6px;
+}
+div.mod:nth-of-type(odd) {
+    margin-right: 6px;
 }

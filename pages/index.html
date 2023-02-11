@@ -14,7 +14,7 @@
         <script src="./js/script.js"></script>
     </head>
     <body onload="onLoad()">
-        <h1>Server Status Page</h1>
+        <div class="box h1"><h1>Server Status Page</h1><img src="./img/icon.svg" class="icon-big"></div>
         <hr>
         <div class="box">
             <div class="box vertical">
@@ -51,6 +51,24 @@
                         <div class="bar" style="height: 0px"></div>
                         <div class="bar" style="height: 0px"></div>
                         <div class="bar" style="height: 0px"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="box vertical">
+                <div class="container">
+                    <div class="box"><h2>Backups</h2><img src="./img/backups.svg" class="icon"></div>
+                    <div id="backups">
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="box"><h2>Drives</h2><img src="./img/drives.svg" class="icon"></div>
+                    <h3>System</h3>
+                    <div class="drive">
+                        <div class="bar horizontal" id="system" style="width: 0px"></div>
+                    </div>
+                    <h3>Server</h3>
+                    <div class="drive">
+                        <div class="bar horizontal" id="server" style="width: 0px"></div>
                     </div>
                 </div>
             </div>

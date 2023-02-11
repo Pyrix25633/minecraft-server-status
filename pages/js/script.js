@@ -5,6 +5,9 @@ let cpuDiv;
 let ramDiv;
 let cpuGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 let ramGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let backupsDiv;
+let systemDiv;
+let serverDiv;
 let modsDiv;
 
 function onLoad() {
@@ -13,9 +16,14 @@ function onLoad() {
   backupUtilityImg = document.getElementById('backup-utility');
   cpuDiv = document.getElementById('cpu');
   ramDiv = document.getElementById('ram');
+  backupsDiv = document.getElementById('backups');
+  systemDiv = document.getElementById('system');
+  serverDiv = document.getElementById('server');
   modsDiv = document.getElementById('mods');
   requestServices();
   requestResources();
+  requestBackups();
+  requestDrives();
   requestMods();
 }
 
@@ -44,6 +52,30 @@ function requestResources() {
   });
 }
 
+function requestBackups() {
+  $.ajax({
+    url: '/backups',
+    method: 'GET',
+    dataType: 'json',
+    success: setBackups,
+    error: (req, err) => {
+      console.log(err);
+    }
+  });
+}
+
+function requestDrives() {
+  $.ajax({
+    url: '/drives',
+    method: 'GET',
+    dataType: 'json',
+    success: setDrives,
+    error: (req, err) => {
+      console.log(err);
+    }
+  });
+}
+
 function requestMods() {
   $.ajax({
     url: '/mods',
@@ -58,7 +90,9 @@ function requestMods() {
 
 setInterval(requestServices, 6000);
 setInterval(requestResources, 6000);
-setInterval(requestMods, 20000);
+setInterval(requestBackups, 40000);
+setInterval(requestDrives, 40000);
+setInterval(requestMods, 40000);
 
 function setServices(data) {
   hamachiImg.src = './img/' + data.hamachi + '.svg';
@@ -77,6 +111,27 @@ function setResources(data) {
     cpuDivs[i].style.height = cpuGraph[i] + 'px';
   for(let i = 0; i < ramDivs.length; i++)
     ramDivs[i].style.height = ramGraph[i] + 'px';
+}
+
+function setBackups(data) {
+  let backups = data.backups;
+  backupsDiv.innerHTML = '';
+  for(let i = 0; i < backups.length; i++) {
+    let backup = document.createElement('div');
+    backup.classList = 'backup';
+    let nameSpan = document.createElement('span');
+    let sizeSpan = document.createElement('span');
+    nameSpan.innerText = backups[i].name;
+    sizeSpan.innerText = backups[i].size;
+    backup.appendChild(nameSpan);
+    backup.appendChild(sizeSpan);
+    backupsDiv.appendChild(backup);
+  }
+}
+
+function setDrives(data) {
+  systemDiv.style.width = data.system * 3 + 'px';
+  serverDiv.style.width = data.server * 3 + 'px';
 }
 
 function setMods(data) {
