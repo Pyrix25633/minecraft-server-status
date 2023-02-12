@@ -58,7 +58,7 @@ main.get('/services', (req, res) => {
     }
     if(stdout.includes('haguichi'))
       data.hamachi = 'on';
-    if(stdout.includes('minecraftForge'))
+    if(stdout.includes('minecraftforge'))
       data.minecraftServer = 'on';
     if(stdout.includes('backup-utility'))
       data.backupUtility = 'on';
