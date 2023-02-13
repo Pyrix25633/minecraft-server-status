@@ -1,7 +1,7 @@
 {
-  "name": "footpath-backend",
+  "name": "http-server",
   "version": "0.1.0",
-  "description": "Back End of Foot Path",
+  "description": "HTTP server using Node, Express and AJAX for reporting minecraft server status",
   "main": "main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GreenSchoolITT/footpath-backend.git"
+    "url": "git+https://github.com/Pyrix25633/http-server.git"
   },
-  "author": "GreenSchoolITT",
+  "author": "Pyrix25633",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/GreenSchoolITT/footpath-backend/issues"
+    "url": "https://github.com/Pyrix25633/http-server/issues"
   },
-  "homepage": "https://github.com/GreenSchoolITT/footpath-backend#readme",
+  "homepage": "https://github.com/Pyrix25633/http-server#readme",
   "dependencies": {
     "body-parser": "^1.20.1",
     "current-processes": "^0.2.1",
