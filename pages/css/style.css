@@ -63,6 +63,9 @@ div.box.h1 {
 div.box.vertical {
     flex-direction: column;
 }
+div.box.vertical:not(:first-of-type):not(:last-of-type) {
+    align-items: center;
+}
 
 div.service {
     width: 190px;

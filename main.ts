@@ -1,57 +1,54 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+import express, {Express, Request, Response} from 'express';
+import {ExecException} from 'child_process';
 import {ls, ps, df, top} from './commands';
 
-const main = express();
+const main: Express = express();
 const port: number = 4000;
-
-main.use(bodyParser.json());
-main.use(bodyParser.urlencoded({ extended: false }));
 
 main.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
 
-main.get('/', (req, res) => {
+main.get('/', (req: Request, res: Response) => {
   res.sendFile('./pages/index.html', {root: __dirname});
 });
 
-main.get('/css/style.css', (req, res) => {
+main.get('/css/style.css', (req: Request, res: Response) => {
   res.sendFile('./pages/css/style.css', {root: __dirname});
 });
 
-main.get('/js/script.js', (req, res) => {
+main.get('/js/script.js', (req: Request, res: Response) => {
   res.sendFile('./pages/js/script.js', {root: __dirname});
 });
 
-main.get('/img/icon.svg', (req, res) => {
+main.get('/img/icon.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/icon.svg', {root: __dirname});
 });
-main.get('/img/on.svg', (req, res) => {
+main.get('/img/on.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/on.svg', {root: __dirname});
 });
-main.get('/img/off.svg', (req, res) => {
+main.get('/img/off.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/off.svg', {root: __dirname});
 });
-main.get('/img/services.svg', (req, res) => {
+main.get('/img/services.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/services.svg', {root: __dirname});
 });
-main.get('/img/resources.svg', (req, res) => {
+main.get('/img/resources.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/resources.svg', {root: __dirname});
 });
-main.get('/img/backups.svg', (req, res) => {
+main.get('/img/backups.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/backups.svg', {root: __dirname});
 });
-main.get('/img/drives.svg', (req, res) => {
+main.get('/img/drives.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/drives.svg', {root: __dirname});
 });
-main.get('/img/mods.svg', (req, res) => {
+main.get('/img/mods.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/mods.svg', {root: __dirname});
 });
 
-main.get('/services', (req, res) => {
+main.get('/services', (req: Request, res: Response) => {
   let data = {hamachi: 'off', minecraftServer: 'off', backupUtility: 'off'};
-  ps((error, stdout, stderr) => {
+  ps((error: ExecException | null, stdout: string, stderr: string) => {
     if(error) {
       res.sendStatus(404);
       return;
@@ -66,9 +63,9 @@ main.get('/services', (req, res) => {
   });
 });
 
-main.get('/resources', (req, res) => {
+main.get('/resources', (req: Request, res: Response) => {
   let data = {cpu: 0, ram: 0};
-  top((error, stdout, stderr) => {
+  top((error: ExecException | null, stdout: string, stderr: string) => {
     let arr = [];
     stdout.split(' ').forEach((element) => {
       if(element != '')
@@ -80,9 +77,10 @@ main.get('/resources', (req, res) => {
   })
 });
 
-main.get('/backups', (req, res) => {
+main.get('/backups', (req: Request, res: Response) => {
   let data = {backups: []};
-  ls('-l -h /media/admin25633/Drive/server-forge/PyrixJmPlayz-backup-backups/', (error, stdout, stderr) => {
+  ls('-l -h /media/admin25633/Drive/server-forge/PyrixJmPlayz-backup-backups/',
+    (error: ExecException | null, stdout: string, stderr: string) => {
     if(error) {
       res.sendStatus(404);
       return;
@@ -101,9 +99,9 @@ main.get('/backups', (req, res) => {
   });
 });
 
-main.get('/drives', (req, res) => {
+main.get('/drives', (req: Request, res: Response) => {
   let data = {system: 0, server: 0};
-  df((error, stdout, stderr) => {
+  df((error: ExecException | null, stdout: string, stderr: string) => {
     if(error) {
       res.sendStatus(404);
       return;
@@ -120,9 +118,9 @@ main.get('/drives', (req, res) => {
   });
 });
 
-main.get('/mods', (req, res) => {
+main.get('/mods', (req: Request, res: Response) => {
   let data = {mods: []};
-  ls('/media/admin25633/Drive/server-forge/mods/', (error, stdout, stderr) => {
+  ls('/media/admin25633/Drive/server-forge/mods/', (error: ExecException | null, stdout: string, stderr: string) => {
     if(error) {
       res.sendStatus(404);
       return;
