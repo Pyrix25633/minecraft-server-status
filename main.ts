@@ -24,6 +24,9 @@ main.get('/js/script.js', (req: Request, res: Response) => {
 main.get('/img/icon.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/icon.svg', {root: __dirname});
 });
+main.get('/img/refresh.svg', (req: Request, res: Response) => {
+  res.sendFile('./pages/img/refresh.svg', {root: __dirname});
+});
 main.get('/img/on.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/on.svg', {root: __dirname});
 });

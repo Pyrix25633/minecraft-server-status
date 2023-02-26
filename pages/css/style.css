@@ -10,6 +10,9 @@ body {
     font-family: 'Roboto Mono', monospace;
     padding: 0 2vw 0 2vw;
 }
+h1 {
+    margin: 5px 0;
+}
 h2 {
     margin: 0 0 10px 0;
 }
@@ -21,7 +24,7 @@ h3:not(:first-of-type) {
 }
 hr {
     color: var(--color-light);
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 img.icon {
     width: 33px;
@@ -57,8 +60,11 @@ div.box {
     padding: 0;
     border: 0;
 }
-div.box.h1 {
+div.box.nav {
     align-items: center;
+    display: grid;
+    grid-template-columns: 22vw 71vw 3vw;
+    justify-content: left;
 }
 div.box.vertical {
     flex-direction: column;

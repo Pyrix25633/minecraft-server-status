@@ -1,3 +1,4 @@
+let refreshImg;
 let hamachiImg;
 let minecraftServerImg;
 let backupUtilityImg;
@@ -11,6 +12,7 @@ let serverDiv;
 let modsDiv;
 
 function onLoad() {
+  refreshImg = document.getElementById('refresh');
   hamachiImg = document.getElementById('hamachi');
   minecraftServerImg = document.getElementById('minecraft-server');
   backupUtilityImg = document.getElementById('backup-utility');
@@ -25,6 +27,13 @@ function onLoad() {
   requestBackups();
   requestDrives();
   requestMods();
+  refreshImg.addEventListener('click', () => {
+    requestServices();
+    requestResources();
+    requestBackups();
+    requestDrives();
+    requestMods();
+  });
 }
 
 function requestServices() {
