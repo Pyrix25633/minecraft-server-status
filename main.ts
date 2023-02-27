@@ -1,6 +1,6 @@
 import express, {Express, Request, Response} from 'express';
 import {ExecException} from 'child_process';
-import {ls, ps, df, top} from './commands';
+import {ls, ps, df, top, ipv6} from './commands';
 
 const main: Express = express();
 const port: number = 4000;
@@ -41,6 +41,9 @@ main.get('/img/resources.svg', (req: Request, res: Response) => {
 });
 main.get('/img/backups.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/backups.svg', {root: __dirname});
+});
+main.get('/img/ipv6.svg', (req: Request, res: Response) => {
+  res.sendFile('./pages/img/ipv6.svg', {root: __dirname});
 });
 main.get('/img/drives.svg', (req: Request, res: Response) => {
   res.sendFile('./pages/img/drives.svg', {root: __dirname});
@@ -98,6 +101,18 @@ main.get('/backups', (req: Request, res: Response) => {
       }
     });
     data.backups.reverse();
+    res.send(data);
+  });
+});
+
+main.get('/ipv6', (req: Request, res: Response) => {
+  let data = {ipv6: "::"};
+  ipv6((error: ExecException | null, stdout: string, stderr: string) => {
+    if(error) {
+      res.sendStatus(404);
+      return;
+    }
+    data.ipv6 = stdout.split(' ')[5].replace('/64', '');
     res.send(data);
   });
 });

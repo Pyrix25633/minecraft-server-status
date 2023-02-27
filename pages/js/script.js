@@ -7,6 +7,7 @@ let ramDiv;
 let cpuGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 let ramGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 let backupsDiv;
+let ipv6Div;
 let systemDiv;
 let serverDiv;
 let modsDiv;
@@ -19,12 +20,14 @@ function onLoad() {
   cpuDiv = document.getElementById('cpu');
   ramDiv = document.getElementById('ram');
   backupsDiv = document.getElementById('backups');
+  ipv6Div = document.getElementById('ipv6');
   systemDiv = document.getElementById('system');
   serverDiv = document.getElementById('server');
   modsDiv = document.getElementById('mods');
   requestServices();
   requestResources();
   requestBackups();
+  requestIpv6();
   requestDrives();
   requestMods();
   refreshImg.addEventListener('click', () => {
@@ -73,6 +76,18 @@ function requestBackups() {
   });
 }
 
+function requestIpv6() {
+  $.ajax({
+    url: '/ipv6',
+    method: 'GET',
+    dataType: 'json',
+    success: setIpv6,
+    error: (req, err) => {
+      console.log(err);
+    }
+  });
+}
+
 function requestDrives() {
   $.ajax({
     url: '/drives',
@@ -100,6 +115,7 @@ function requestMods() {
 setInterval(requestServices, 6000);
 setInterval(requestResources, 6000);
 setInterval(requestBackups, 40000);
+setInterval(requestIpv6, 40000);
 setInterval(requestDrives, 40000);
 setInterval(requestMods, 40000);
 
@@ -136,6 +152,10 @@ function setBackups(data) {
     backup.appendChild(sizeSpan);
     backupsDiv.appendChild(backup);
   }
+}
+
+function setIpv6(data) {
+  ipv6Div.innerText = data.ipv6;
 }
 
 function setDrives(data) {

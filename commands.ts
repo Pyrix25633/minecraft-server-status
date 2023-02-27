@@ -16,3 +16,7 @@ export function top(callback: (error: ExecException | null, stdout: string, stde
 export function df(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
     exec('df -h |grep -e sda4 -e sdb5', callback);
 }
+
+export function ipv6(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
+    exec('ip addr |grep "scope global dynamic mngtmpaddr"', callback);
+}
