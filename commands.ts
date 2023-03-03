@@ -10,7 +10,7 @@ export function ls(args: string, callback: (error: ExecException | null, stdout:
 }
 
 export function top(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
-    exec('top -b -n 2 |grep -e Cpu -e buff |tail -n 2', callback);
+    exec('top -b -n 2 |grep -e Cpu -e buff -e Swap |tail -n 3', callback);
 }
 
 export function df(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {

@@ -1,29 +1,20 @@
-let refreshImg;
-let hamachiImg;
-let minecraftServerImg;
-let backupUtilityImg;
-let cpuDiv;
-let ramDiv;
-let cpuGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-let ramGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-let backupsDiv;
-let ipv6Div;
-let systemDiv;
-let serverDiv;
-let modsDiv;
+const refreshImg = document.getElementById('refresh');
+const hamachiImg = document.getElementById('hamachi');
+const minecraftServerImg = document.getElementById('minecraft-server');
+const backupUtilityImg = document.getElementById('backup-utility');
+const cpuDiv = document.getElementById('cpu');
+const ramDiv = document.getElementById('ram');
+const swapDiv = document.getElementById('swap');
+const cpuGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+const ramGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+const swapGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+const backupsDiv = document.getElementById('backups');
+const ipv6Div = document.getElementById('ipv6');
+const systemDiv = document.getElementById('system');
+const serverDiv = document.getElementById('server');
+const modsDiv = document.getElementById('mods');
 
 function onLoad() {
-  refreshImg = document.getElementById('refresh');
-  hamachiImg = document.getElementById('hamachi');
-  minecraftServerImg = document.getElementById('minecraft-server');
-  backupUtilityImg = document.getElementById('backup-utility');
-  cpuDiv = document.getElementById('cpu');
-  ramDiv = document.getElementById('ram');
-  backupsDiv = document.getElementById('backups');
-  ipv6Div = document.getElementById('ipv6');
-  systemDiv = document.getElementById('system');
-  serverDiv = document.getElementById('server');
-  modsDiv = document.getElementById('mods');
   requestServices();
   requestResources();
   requestBackups();
@@ -128,14 +119,19 @@ function setServices(data) {
 function setResources(data) {
   shiftArray(cpuGraph);
   shiftArray(ramGraph);
+  shiftArray(swapGraph);
   cpuGraph[9] = data.cpu;
   ramGraph[9] = data.ram;
+  swapGraph[9] = data.swap;
   let cpuDivs = cpuDiv.getElementsByTagName('div');
   let ramDivs = ramDiv.getElementsByTagName('div');
+  let swapDivs = swapDiv.getElementsByTagName('div');
   for(let i = 0; i < cpuDivs.length; i++)
     cpuDivs[i].style.height = cpuGraph[i] + 'px';
   for(let i = 0; i < ramDivs.length; i++)
     ramDivs[i].style.height = ramGraph[i] + 'px';
+  for(let i = 0; i < swapDivs.length; i++)
+    swapDivs[i].style.height = swapGraph[i] + 'px';
 }
 
 function setBackups(data) {

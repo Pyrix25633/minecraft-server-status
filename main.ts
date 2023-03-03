@@ -70,7 +70,7 @@ main.get('/services', (req: Request, res: Response) => {
 });
 
 main.get('/resources', (req: Request, res: Response) => {
-  let data = {cpu: 0, ram: 0};
+  let data = {cpu: 0, ram: 0, swap: 0};
   top((error: ExecException | null, stdout: string, stderr: string) => {
     let arr = [];
     stdout.split(' ').forEach((element) => {
@@ -79,6 +79,7 @@ main.get('/resources', (req: Request, res: Response) => {
     });
     data.cpu = parseInt((parseFloat(arr[1]) + parseFloat(arr[3])).toFixed(0));
     data.ram = parseInt((parseFloat(arr[23]) / parseFloat(arr[19]) * 100).toFixed(0));
+    data.swap = parseInt((parseFloat(arr[32]) / parseFloat(arr[28]) * 100).toFixed(0));
     res.send(data);
   })
 });
