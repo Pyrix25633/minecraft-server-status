@@ -53,12 +53,14 @@ main.get('/img/mods.svg', (req: Request, res: Response) => {
 });
 
 main.get('/services', (req: Request, res: Response) => {
-  let data = {hamachi: 'off', minecraftServer: 'off', backupUtility: 'off'};
+  let data = {noipDuc: 'off', hamachi: 'off', minecraftServer: 'off', backupUtility: 'off'};
   ps((error: ExecException | null, stdout: string, stderr: string) => {
     if(error) {
       res.sendStatus(404);
       return;
     }
+    if(stdout.includes('noip-duc'))
+      data.noipDuc = 'on';
     if(stdout.includes('haguichi'))
       data.hamachi = 'on';
     if(stdout.includes('minecraftforge'))

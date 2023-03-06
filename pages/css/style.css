@@ -96,6 +96,9 @@ div.resource {
     border-radius: 7px;
     align-items: end;
 }
+div.resource#swap {
+    height: 50px;
+}
 div.bar {
     background-color: var(--color-light);
     border: 0;

@@ -1,4 +1,5 @@
 const refreshImg = document.getElementById('refresh');
+const noipDucImg = document.getElementById('noip-duc');
 const hamachiImg = document.getElementById('hamachi');
 const minecraftServerImg = document.getElementById('minecraft-server');
 const backupUtilityImg = document.getElementById('backup-utility');
@@ -111,6 +112,7 @@ setInterval(requestDrives, 40000);
 setInterval(requestMods, 40000);
 
 function setServices(data) {
+  noipDucImg.src = './img/' + data.noipDuc + '.svg';
   hamachiImg.src = './img/' + data.hamachi + '.svg';
   minecraftServerImg.src = './img/' + data.minecraftServer + '.svg';
   backupUtilityImg.src = './img/' + data.backupUtility + '.svg';
@@ -131,7 +133,7 @@ function setResources(data) {
   for(let i = 0; i < ramDivs.length; i++)
     ramDivs[i].style.height = ramGraph[i] + 'px';
   for(let i = 0; i < swapDivs.length; i++)
-    swapDivs[i].style.height = swapGraph[i] + 'px';
+    swapDivs[i].style.height = swapGraph[i] / 2 + 'px';
 }
 
 function setBackups(data) {
