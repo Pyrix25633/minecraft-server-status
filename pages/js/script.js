@@ -3,6 +3,9 @@ const noipDucImg = document.getElementById('noip-duc');
 const hamachiImg = document.getElementById('hamachi');
 const minecraftServerImg = document.getElementById('minecraft-server');
 const backupUtilityImg = document.getElementById('backup-utility');
+const cpuNowSpan = document.getElementById('cpu-now');
+const ramNowSpan = document.getElementById('ram-now');
+const swapNowSpan = document.getElementById('swap-now');
 const cpuDiv = document.getElementById('cpu');
 const ramDiv = document.getElementById('ram');
 const swapDiv = document.getElementById('swap');
@@ -13,7 +16,22 @@ const backupsDiv = document.getElementById('backups');
 const ipv6Div = document.getElementById('ipv6');
 const systemDiv = document.getElementById('system');
 const serverDiv = document.getElementById('server');
-const modsDiv = document.getElementById('mods');
+const versionSpan = document.getElementById('version');
+const motdSpan = document.getElementById('motd')
+const playersOnlineSpan = document.getElementById('players-online');
+const playersMaxSpan = document.getElementById('players-max');
+const playersDiv = document.getElementById('players');
+const worldSpan = document.getElementById('world');
+const faviconImg = document.getElementById('favicon');
+const tpsOverworldNowSpan = document.getElementById('tps-overworld-now');
+const tpsNetherNowSpan = document.getElementById('tps-nether-now');
+const tpsEndNowSpan = document.getElementById('tps-end-now');
+const tpsOverworldDiv = document.getElementById('tps-overworld');
+const tpsNetherDiv = document.getElementById('tps-nether');
+const tpsEndDiv = document.getElementById('tps-end');
+const tpsOverworldGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+const tpsNetherGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+const tpsEndGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 function onLoad() {
   requestServices();
@@ -21,19 +39,24 @@ function onLoad() {
   requestBackups();
   requestIpv6();
   requestDrives();
-  requestMods();
-  refreshImg.addEventListener('click', () => {
-    requestServices();
-    requestResources();
-    requestBackups();
-    requestDrives();
-    requestMods();
-  });
+  requestStatus();
+  requestStatusFullQuery();
+  requestStatusTps();
 }
 
-function requestServices() {
+refreshImg.addEventListener('click', () => {
+  requestServices('?force=true');
+  requestResources('?force=true');
+  requestBackups('?force=true');
+  requestIpv6('?force=true');
+  requestDrives('?force=true');
+  requestStatus('?force=true');
+  requestStatusTps('?force=true');
+});
+
+function requestServices(args = '') {
   $.ajax({
-    url: '/services',
+    url: '/services' + args,
     method: 'GET',
     dataType: 'json',
     success: setServices,
@@ -43,9 +66,9 @@ function requestServices() {
   });
 }
 
-function requestResources() {
+function requestResources(args = '') {
   $.ajax({
-    url: '/resources',
+    url: '/resources' + args,
     method: 'GET',
     dataType: 'json',
     timeout: 4000,
@@ -56,9 +79,9 @@ function requestResources() {
   });
 }
 
-function requestBackups() {
+function requestBackups(args = '') {
   $.ajax({
-    url: '/backups',
+    url: '/backups' + args,
     method: 'GET',
     dataType: 'json',
     success: setBackups,
@@ -68,9 +91,9 @@ function requestBackups() {
   });
 }
 
-function requestIpv6() {
+function requestIpv6(args = '') {
   $.ajax({
-    url: '/ipv6',
+    url: '/ipv6' + args,
     method: 'GET',
     dataType: 'json',
     success: setIpv6,
@@ -80,9 +103,9 @@ function requestIpv6() {
   });
 }
 
-function requestDrives() {
+function requestDrives(args = '') {
   $.ajax({
-    url: '/drives',
+    url: '/drives' + args,
     method: 'GET',
     dataType: 'json',
     success: setDrives,
@@ -92,12 +115,36 @@ function requestDrives() {
   });
 }
 
-function requestMods() {
+function requestStatus(args = '') {
   $.ajax({
-    url: '/mods',
+    url: '/status' + args,
     method: 'GET',
     dataType: 'json',
-    success: setMods,
+    success: setStatus,
+    error: (req, err) => {
+      console.log(err);
+    }
+  });
+}
+
+function requestStatusFullQuery(args = '') {
+  $.ajax({
+    url: '/statusFullQuery' + args,
+    method: 'GET',
+    dataType: 'json',
+    success: setStatusFullQuery,
+    error: (req, err) => {
+      console.log(err);
+    }
+  });
+}
+
+function requestStatusTps(args = '') {
+  $.ajax({
+    url: '/statusTps' + args,
+    method: 'GET',
+    dataType: 'json',
+    success: setStatusTps,
     error: (req, err) => {
       console.log(err);
     }
@@ -109,7 +156,9 @@ setInterval(requestResources, 6000);
 setInterval(requestBackups, 40000);
 setInterval(requestIpv6, 40000);
 setInterval(requestDrives, 40000);
-setInterval(requestMods, 40000);
+setInterval(requestStatus, 40000);
+setInterval(requestStatusFullQuery, 6000);
+setInterval(requestStatusTps, 6000);
 
 function setServices(data) {
   noipDucImg.src = './img/' + data.noipDuc + '.svg';
@@ -128,10 +177,13 @@ function setResources(data) {
   let cpuDivs = cpuDiv.getElementsByTagName('div');
   let ramDivs = ramDiv.getElementsByTagName('div');
   let swapDivs = swapDiv.getElementsByTagName('div');
+  cpuNowSpan.innerText = data.cpu;
   for(let i = 0; i < cpuDivs.length; i++)
     cpuDivs[i].style.height = cpuGraph[i] + 'px';
+  ramNowSpan.innerText = data.ram;
   for(let i = 0; i < ramDivs.length; i++)
     ramDivs[i].style.height = ramGraph[i] + 'px';
+  swapNowSpan.innerText = data.swap;
   for(let i = 0; i < swapDivs.length; i++)
     swapDivs[i].style.height = swapGraph[i] / 2 + 'px';
 }
@@ -161,15 +213,47 @@ function setDrives(data) {
   serverDiv.style.width = data.server * 3 + 'px';
 }
 
-function setMods(data) {
-  let mods = data.mods;
-  modsDiv.innerHTML = '';
-  for(let i = 0; i < mods.length; i++) {
-    let mod = document.createElement('div');
-    mod.classList = 'mod';
-    mod.innerText = mods[i];
-    modsDiv.appendChild(mod);
+function setStatus(data) {
+  versionSpan.innerText = data.version;
+  motdSpan.innerHTML = data.motd;
+  let favicon = data.favicon;
+  if(favicon == undefined) favicon = './img/favicon.svg';
+  faviconImg.src = favicon;
+}
+
+function setStatusFullQuery(data) {
+  playersOnlineSpan.innerText = data.players.online;
+  playersMaxSpan.innerText = data.players.max;
+  let players = data.players.list;
+  playersDiv.innerHTML = '';
+  for(let i = 0; i < players.length; i++) {
+    let player = document.createElement('div');
+    player.classList = 'player';
+    player.innerText = players[i];
+    playersDiv.appendChild(player);
   }
+  worldSpan.innerText = data.world;
+}
+
+function setStatusTps(data) {
+  shiftArray(tpsOverworldGraph);
+  shiftArray(tpsNetherGraph);
+  shiftArray(tpsEndGraph);
+  tpsOverworldGraph[9] = data.overworld / 20 * 100;
+  tpsNetherGraph[9] = data.nether / 20 * 100;
+  tpsEndGraph[9] = data.end / 20 * 100;
+  let tpsOverworldDivs = tpsOverworldDiv.getElementsByTagName('div');
+  let tpsNetherDivs = tpsNetherDiv.getElementsByTagName('div');
+  let tpsEndDivs = tpsEndDiv.getElementsByTagName('div');
+  tpsOverworldNowSpan.innerText = data.overworld;
+  for(let i = 0; i < tpsOverworldDivs.length; i++)
+    tpsOverworldDivs[i].style.height = tpsOverworldGraph[i] + 'px';
+  tpsNetherNowSpan.innerText = data.nether;
+  for(let i = 0; i < tpsNetherDivs.length; i++)
+    tpsNetherDivs[i].style.height = tpsNetherGraph[i] + 'px';
+  tpsEndNowSpan.innerText = data.end;
+  for(let i = 0; i < tpsEndDivs.length; i++)
+    tpsEndDivs[i].style.height = tpsEndGraph[i] + 'px';
 }
 
 function shiftArray(array) {

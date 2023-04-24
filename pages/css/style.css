@@ -34,7 +34,7 @@ img.icon-big {
     width: 43px;
     height: 43px;
 }
-span:not(:first-of-type) {
+div#backups span:not(:first-of-type) {
     margin-left: 20px;
 }
 
@@ -59,6 +59,9 @@ div.box {
     align-content: space-between;
     padding: 0;
     border: 0;
+}
+div#main-box {
+    min-height: 85vh;
 }
 div.box.nav {
     align-items: center;
@@ -95,6 +98,7 @@ div.resource {
     height: 100px;
     border-radius: 7px;
     align-items: end;
+    width: min-content;
 }
 div.resource#swap {
     height: 50px;
@@ -146,23 +150,24 @@ div.bar.horizontal {
     border-radius: 3px;
 }
 
-div#mods {
-    display: grid;
-    border: 0;
-    width: fit-content;
-    padding: 0;
-    grid-template-columns: auto auto;
+img#favicon {
+    border-radius: 5px;
 }
-div.mod {
-    width: auto;
+div#players {
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 400px;
+    border: 0;
+    padding: 0;
+    justify-content: start;
+}
+div.player {
+    width: min-content;
     border-radius: 5px;
     font-size: 13px;
     padding-left: 4px;
     padding-right: 4px;
 }
-div.mod:not(:nth-of-type(1)):not(:nth-of-type(2)) {
-    margin-top: 6px;
-}
-div.mod:nth-of-type(odd) {
-    margin-right: 6px;
+div.player:not(:first-of-type) {
+    margin-left: 6px;
 }
