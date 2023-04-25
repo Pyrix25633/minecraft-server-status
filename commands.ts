@@ -32,12 +32,12 @@ export function statusFullQuery(result: (res: util.FullQueryResponse) => void, e
 }
 
 export async function statusTps(): Promise<string> {
+    if(!client.isConnected) try {await client.connect('127.0.0.1');} catch(_) {return undefined;}
+    if(!client.isLoggedIn) try {await client.login('PyrixJmPlayz@RCON');} catch(_) {return undefined;}
     return (async () => {
         try {
-            await client.connect('127.0.0.1');
-            await client.login('PyrixJmPlayz@RCON');
             const message = await client.execute('forge tps');
-            client.close();
+            client.removeAllListeners();
             return message;
         } catch(e) {
             return undefined;

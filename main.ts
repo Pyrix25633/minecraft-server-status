@@ -227,9 +227,9 @@ main.get('/statusTps', async (req: Request, res: Response) => {
     let output = await statusTps();
     if(output != undefined) {
       let array = output.split('Mean TPS: ')
-      data.overworld = parseFloat(array[2].substring(0, 6));
+      data.overworld = parseFloat(array[1].substring(0, 6));
+      data.end = parseFloat(array[2].substring(0, 6));
       data.nether = parseFloat(array[3].substring(0, 6));
-      data.end = parseFloat(array[4].substring(0, 6));
     }
     else buffer.statusTps.data = {overworld: 0, nether: 0, end: 0};
     buffer.statusTps.timestamp = timestamp;
