@@ -152,6 +152,7 @@ div.bar.horizontal {
 
 img#favicon {
     border-radius: 5px;
+    margin-left: 10px;
 }
 div#players {
     flex-direction: row;

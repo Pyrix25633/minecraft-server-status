@@ -2,6 +2,14 @@ import child_process, {ExecException} from 'child_process';
 import * as util from 'minecraft-server-util';
 const exec = child_process.exec;
 const client = new util.RCON();
+process.on('uncaughtException', resetClient);
+process.on('unhandledRejection', resetClient);
+
+function resetClient() {
+    try {
+        client.close();
+    } catch(e) {console.log(e);}
+}
 
 export function ps(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
     exec('ps -A -f', callback);
