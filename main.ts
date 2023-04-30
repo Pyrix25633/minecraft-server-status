@@ -6,13 +6,22 @@ import {FullQueryResponse, JavaStatusResponse} from 'minecraft-server-util';
 const main: Express = express();
 const port: number = 4000;
 
-let buffer = {
+let buffer: {
+  services: {data: {noipDuc: string, hamachi: string, minecraftServer: string, backupUtility: string}, timestamp: number},
+  resources: {data: {cpu: number, ram: number, swap: number}, timestamp: number},
+  backups: {data: {backups: {name: string, size: string}[]}, timestamp: number},
+  ipv6: {data: {ipv6: string}, timestamp: number},
+  drives: {data: {system: number, server: number}, timestamp: number},
+  status: {data: {version: string, motd: string, favicon: string | null}, timestamp: number},
+  statusFullQuery: {data: {players: {online: number, max: number, list: string[]}, world: string}, timestamp: number},
+  statusTps: {data: {overworld: number, nether: number, end: number}, timestamp: number}
+} = {
   services: {data: {noipDuc: 'off', hamachi: 'off', minecraftServer: 'off', backupUtility: 'off'}, timestamp: 0},
   resources: {data: {cpu: 0, ram: 0, swap: 0}, timestamp: 0},
   backups: {data: {backups: []}, timestamp: 0},
   ipv6: {data: {ipv6: "::"}, timestamp: 0},
   drives: {data: {system: 0, server: 0}, timestamp: 0},
-  status: {data: {version: 'Unknown', motd: 'Unknown', favicon: undefined}, timestamp: 0},
+  status: {data: {version: 'Unknown', motd: 'Unknown', favicon: './img/favicon.svg'}, timestamp: 0},
   statusFullQuery: {data: {players: {online: 0, max: 0, list: []}, world: 'Unknown'}, timestamp: 0},
   statusTps: {data: {overworld: 0, nether: 0, end: 0}, timestamp: 0}
 };
@@ -97,7 +106,7 @@ main.get('/resources', (req: Request, res: Response) => {
   let timestamp: number = Date.now();
   if(buffer.resources.timestamp + timeout.sixSeconds < timestamp || req.query.force == 'true') {
     top((error: ExecException | null, stdout: string, stderr: string) => {
-      let arr = [];
+      let arr: string[] = [];
       stdout.split(' ').forEach((element) => {
         if(element != '')
           arr = arr.concat(element);
@@ -125,7 +134,7 @@ main.get('/backups', (req: Request, res: Response) => {
       data = buffer.backups.data = {backups: []};
       stdout.split('\n').forEach((element) => {
         if(element.includes('.zip')) {
-          let arr = [];
+          let arr: string[] = [];
           element.split(' ').forEach((e) => {
             if(e != '') arr = arr.concat(e);
           });
@@ -166,7 +175,7 @@ main.get('/drives', (req: Request, res: Response) => {
         res.sendStatus(404);
         return;
       }
-      let arr = [];
+      let arr: string[] = [];
       stdout.split('\n').forEach((element) => {
         element.split(' ').forEach((e) => {
           if(e != '') arr = arr.concat(e);
@@ -187,13 +196,13 @@ main.get('/status', (req: Request, res: Response) => {
   if(buffer.status.timestamp + timeout.fourtySeconds < timestamp || req.query.force == 'true') {
     status((result: JavaStatusResponse) => {
       data.version = result.version.name;
-      data.motd = result.motd.html.replace('Â', '').replace('Â', '');
+      data.motd = result.motd.html;
       data.favicon = result.favicon;
       buffer.status.timestamp = timestamp;
       res.send(data);
     },
     (err: any) => {
-      buffer.status.data = {version: 'Unknown', motd: 'Unknown', favicon: undefined};
+      buffer.status.data = {version: 'Unknown', motd: 'Unknown', favicon: './img/favicon.svg'};
       buffer.status.timestamp = timestamp;
       res.send(data);
     });

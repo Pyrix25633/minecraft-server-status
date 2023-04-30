@@ -216,9 +216,7 @@ function setDrives(data) {
 function setStatus(data) {
   versionSpan.innerText = data.version;
   motdSpan.innerHTML = data.motd;
-  let favicon = data.favicon;
-  if(favicon == undefined) favicon = './img/favicon.svg';
-  faviconImg.src = favicon;
+  faviconImg.src = data.favicon;
 }
 
 function setStatusFullQuery(data) {

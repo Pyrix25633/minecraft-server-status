@@ -39,7 +39,7 @@ export function statusFullQuery(result: (res: util.FullQueryResponse) => void, e
     util.queryFull('127.0.0.1').then((res) => {result(res)}).catch((err) => {error(err)});
 }
 
-export async function statusTps(): Promise<string> {
+export async function statusTps(): Promise<string | undefined> {
     if(!client.isConnected) try {await client.connect('127.0.0.1');} catch(_) {return undefined;}
     if(!client.isLoggedIn) try {await client.login('PyrixJmPlayz@RCON');} catch(_) {return undefined;}
     return (async () => {
