@@ -98,7 +98,7 @@ main.get('/services', (req: Request, res: Response) => {
       }
       else if(stdout.includes('fabric-server')) {
         data.minecraftServer = 'on';
-        serverType = 'forge';
+        serverType = 'fabric';
       }
       else serverType = null;
       if(stdout.includes('backup-utility'))
@@ -259,8 +259,8 @@ main.get('/statusTps', async (req: Request, res: Response) => {
   let data = buffer.statusTps.data;
   let timestamp: number = Date.now();
   if((buffer.statusTps.timestamp + timeout.sixSeconds < timestamp || req.query.force == 'true') && serverType == 'forge') {
+    console.log('test', serverType);
     let output = await statusTps();
-    console.log(output);
     if(output != undefined) {
       let array = output.split('Mean TPS: ');
       data.overworld = parseFloat(array[1].substring(0, 6));
