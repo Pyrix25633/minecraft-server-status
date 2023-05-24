@@ -12,7 +12,8 @@ const swapDiv = document.getElementById('swap');
 const cpuGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 const ramGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 const swapGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-const backupsDiv = document.getElementById('backups');
+const pyrixjmplayzDiv = document.getElementById('pyrixjmplayz');
+const cobblemonDiv = document.getElementById('cobblemon');
 const ipv6Div = document.getElementById('ipv6');
 const systemDiv = document.getElementById('system');
 const serverDiv = document.getElementById('server');
@@ -189,18 +190,31 @@ function setResources(data) {
 }
 
 function setBackups(data) {
-  let backups = data.backups;
-  backupsDiv.innerHTML = '';
-  for(let i = 0; i < backups.length; i++) {
+  let pyrixjmplayz = data.pyrixjmplayz;
+  pyrixjmplayzDiv.innerHTML = '';
+  for(let i = 0; i < pyrixjmplayz.length; i++) {
     let backup = document.createElement('div');
     backup.classList = 'backup';
     let nameSpan = document.createElement('span');
     let sizeSpan = document.createElement('span');
-    nameSpan.innerText = backups[i].name;
-    sizeSpan.innerText = backups[i].size;
+    nameSpan.innerText = pyrixjmplayz[i].name;
+    sizeSpan.innerText = pyrixjmplayz[i].size;
     backup.appendChild(nameSpan);
     backup.appendChild(sizeSpan);
-    backupsDiv.appendChild(backup);
+    pyrixjmplayzDiv.appendChild(backup);
+  }
+  let cobblemon = data.cobblemon;
+  cobblemonDiv.innerHTML = '';
+  for(let i = 0; i < cobblemon.length; i++) {
+    let backup = document.createElement('div');
+    backup.classList = 'backup';
+    let nameSpan = document.createElement('span');
+    let sizeSpan = document.createElement('span');
+    nameSpan.innerText = cobblemon[i].name;
+    sizeSpan.innerText = cobblemon[i].size;
+    backup.appendChild(nameSpan);
+    backup.appendChild(sizeSpan);
+    cobblemonDiv.appendChild(backup);
   }
 }
 

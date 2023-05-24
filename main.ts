@@ -9,7 +9,7 @@ const port: number = 4000;
 let buffer: {
   services: {data: {noipDuc: string, hamachi: string, minecraftServer: string, backupUtility: string}, timestamp: number},
   resources: {data: {cpu: number, ram: number, swap: number}, timestamp: number},
-  backups: {data: {backups: {name: string, size: string}[]}, timestamp: number},
+  backups: {data: {pyrixjmplayz: {name: string, size: string}[], cobblemon: {name: string, size: string}[]}, timestamp: number},
   ipv6: {data: {ipv6: string}, timestamp: number},
   drives: {data: {system: number, server: number}, timestamp: number},
   status: {data: {version: string, motd: string, favicon: string | null}, timestamp: number},
@@ -18,7 +18,7 @@ let buffer: {
 } = {
   services: {data: {noipDuc: 'off', hamachi: 'off', minecraftServer: 'off', backupUtility: 'off'}, timestamp: 0},
   resources: {data: {cpu: 0, ram: 0, swap: 0}, timestamp: 0},
-  backups: {data: {backups: []}, timestamp: 0},
+  backups: {data: {pyrixjmplayz: [], cobblemon: []}, timestamp: 0},
   ipv6: {data: {ipv6: "::"}, timestamp: 0},
   drives: {data: {system: 0, server: 0}, timestamp: 0},
   status: {data: {version: 'Unknown', motd: 'Unknown', favicon: './img/favicon.svg'}, timestamp: 0},
@@ -86,6 +86,7 @@ main.get('/services', (req: Request, res: Response) => {
         res.sendStatus(404);
         return;
       }
+      buffer.services.data = {noipDuc: 'off', hamachi: 'off', minecraftServer: 'off', backupUtility: 'off'};
       if(stdout.includes('noip-duc'))
         data.noipDuc = 'on';
       if(stdout.includes('haguichi'))
@@ -131,19 +132,36 @@ main.get('/backups', (req: Request, res: Response) => {
         res.sendStatus(404);
         return;
       }
-      data = buffer.backups.data = {backups: []};
+      data = buffer.backups.data = {pyrixjmplayz: [], cobblemon: []};
       stdout.split('\n').forEach((element) => {
         if(element.includes('.zip')) {
           let arr: string[] = [];
           element.split(' ').forEach((e) => {
             if(e != '') arr = arr.concat(e);
           });
-          data.backups = data.backups.concat({name: arr[8].substring(0, arr[8].length - 4), size: arr[4] + 'iB'});
+          data.pyrixjmplayz = data.pyrixjmplayz.concat({name: arr[8].substring(0, arr[8].length - 4), size: arr[4] + 'iB'});
         }
       });
-      data.backups.reverse();
-      buffer.backups.timestamp = timestamp;
-      res.send(data);
+      data.pyrixjmplayz.reverse();
+      ls('-l -h /media/admin25633/Drive/server-fabric/cobblemon-backup-backups/',
+        (error: ExecException | null, stdout: string, stderr: string) => {
+        if(error) {
+          res.sendStatus(404);
+          return;
+        }
+        stdout.split('\n').forEach((element) => {
+          if(element.includes('.zip')) {
+            let arr: string[] = [];
+            element.split(' ').forEach((e) => {
+              if(e != '') arr = arr.concat(e);
+            });
+            data.cobblemon = data.cobblemon.concat({name: arr[8].substring(0, arr[8].length - 4), size: arr[4] + 'iB'});
+          }
+        });
+        data.cobblemon.reverse();
+        buffer.backups.timestamp = timestamp;
+        res.send(data);
+      });
     });
   }
   else res.send(data);
