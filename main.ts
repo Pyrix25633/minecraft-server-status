@@ -29,6 +29,7 @@ let timeout = {
   sixSeconds: 6000 * 95 / 100,
   fourtySeconds: 4000 * 95 / 100
 };
+let serverType: string | null = null;
 
 main.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
@@ -91,8 +92,15 @@ main.get('/services', (req: Request, res: Response) => {
         data.noipDuc = 'on';
       if(stdout.includes('haguichi'))
         data.hamachi = 'on';
-      if(stdout.includes('minecraftforge'))
+      if(stdout.includes('minecraftforge')) {
         data.minecraftServer = 'on';
+        serverType = 'forge';
+      }
+      else if(stdout.includes('fabric-server')) {
+        data.minecraftServer = 'on';
+        serverType = 'forge';
+      }
+      else serverType = null;
       if(stdout.includes('backup-utility'))
         data.backupUtility = 'on';
       buffer.services.timestamp = timestamp;
@@ -143,7 +151,7 @@ main.get('/backups', (req: Request, res: Response) => {
         }
       });
       data.pyrixjmplayz.reverse();
-      ls('-l -h /media/admin25633/Drive/server-fabric/cobblemon-backup-backups/',
+      ls('-l -h /media/admin25633/Drive/server-fabric/Cobblemon-backup-backups/',
         (error: ExecException | null, stdout: string, stderr: string) => {
         if(error) {
           res.sendStatus(404);
@@ -250,10 +258,11 @@ main.get('/statusFullQuery', (req: Request, res: Response) => {
 main.get('/statusTps', async (req: Request, res: Response) => {
   let data = buffer.statusTps.data;
   let timestamp: number = Date.now();
-  if(buffer.statusTps.timestamp + timeout.sixSeconds < timestamp || req.query.force == 'true') {
+  if((buffer.statusTps.timestamp + timeout.sixSeconds < timestamp || req.query.force == 'true') && serverType == 'forge') {
     let output = await statusTps();
+    console.log(output);
     if(output != undefined) {
-      let array = output.split('Mean TPS: ')
+      let array = output.split('Mean TPS: ');
       data.overworld = parseFloat(array[1].substring(0, 6));
       data.end = parseFloat(array[2].substring(0, 6));
       data.nether = parseFloat(array[3].substring(0, 6));
