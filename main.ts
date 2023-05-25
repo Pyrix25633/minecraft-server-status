@@ -29,7 +29,6 @@ let timeout = {
   sixSeconds: 6000 * 95 / 100,
   fourtySeconds: 4000 * 95 / 100
 };
-let serverType: string | null = null;
 
 main.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
