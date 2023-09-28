@@ -1,0 +1,15 @@
+{
+    "https": {
+        "cert": "",
+        "key": "",
+        "passphrase": "",
+        "port": 443
+    },
+    "minecraft": {
+        "ip": "127.0.0.1",
+        "rcon": {
+            "port": 25575,
+            "password": ""
+        }
+    }
+}

@@ -1,4 +1,4 @@
-const refreshImg = document.getElementById('refresh');
+const statusServerImg = document.getElementById('status-server');
 const noipDucImg = document.getElementById('noip-duc');
 const hamachiImg = document.getElementById('hamachi');
 const minecraftServerImg = document.getElementById('minecraft-server');
@@ -33,8 +33,21 @@ const tpsOverworldGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 const tpsNetherGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 const tpsEndGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+const socket = io();
+socket.on('connect', () => {
+    statusServerImg.src = './img/online.svg'
+});
+socket.on('disconnect', () => {
+    statusServerImg.src = './img/offline.svg'
+});
+socket.on('services', (data) => {
+    noipDucImg.src = './img/' + (data.noipDuc ? 'on' : 'off') + '.svg'
+    hamachiImg.src = './img/' + (data.hamachi ? 'on' : 'off') + '.svg'
+    minecraftServerImg.src = './img/' + (data.minecraftServer ? 'on' : 'off') + '.svg'
+    backupUtilityImg.src = './img/' + (data.backupUtility ? 'on' : 'off') + '.svg'
+});
+
 function onLoad() {
-  requestServices();
   requestResources();
   requestBackups();
   requestIpv6();
@@ -42,28 +55,6 @@ function onLoad() {
   requestStatus();
   requestStatusFullQuery();
   requestStatusTps();
-}
-
-refreshImg.addEventListener('click', () => {
-  requestServices('?force=true');
-  requestResources('?force=true');
-  requestBackups('?force=true');
-  requestIpv6('?force=true');
-  requestDrives('?force=true');
-  requestStatus('?force=true');
-  requestStatusTps('?force=true');
-});
-
-function requestServices(args = '') {
-  $.ajax({
-    url: '/services' + args,
-    method: 'GET',
-    dataType: 'json',
-    success: setServices,
-    error: (req, err) => {
-      console.log(err);
-    }
-  });
 }
 
 function requestResources(args = '') {
@@ -151,7 +142,6 @@ function requestStatusTps(args = '') {
   });
 }
 
-setInterval(requestServices, 6000);
 setInterval(requestResources, 6000);
 setInterval(requestBackups, 40000);
 setInterval(requestIpv6, 40000);
@@ -159,13 +149,6 @@ setInterval(requestDrives, 40000);
 setInterval(requestStatus, 40000);
 setInterval(requestStatusFullQuery, 6000);
 setInterval(requestStatusTps, 6000);
-
-function setServices(data) {
-  noipDucImg.src = './img/' + data.noipDuc + '.svg';
-  hamachiImg.src = './img/' + data.hamachi + '.svg';
-  minecraftServerImg.src = './img/' + data.minecraftServer + '.svg';
-  backupUtilityImg.src = './img/' + data.backupUtility + '.svg';
-}
 
 function setResources(data) {
   shiftArray(cpuGraph);

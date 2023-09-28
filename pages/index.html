@@ -11,140 +11,91 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&family=Roboto+Mono&display=swap" rel="stylesheet">
-        <script defer src="./js/script.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script defer type="module" src="./js/script.js"></script>
     </head>
     <body onload="onLoad()">
         <div class="box nav">
             <h1>Server Status Page</h1>
             <img src="./img/icon.svg" class="icon-big">
-            <img src="./img/refresh.svg" class="icon-big" id="refresh">
         </div>
         <hr>
         <div class="box" id="main-box">
-            <div class="box vertical">
-                <div class="container">
+            <div class="box vertical gap">
+                <div class="container panel">
                     <div class="box"><h2>Services</h2><img src="./img/services.svg" class="icon"></div>
-                    <div class="service"><span>NoIP Duc</span><img src="./img/off.svg" class="status" id="noip-duc"></div>
-                    <div class="service"><span>Hamachi</span><img src="./img/off.svg" class="status" id="hamachi"></div>
-                    <div class="service"><span>Minecraft Server</span><img src="./img/off.svg" class="status" id="minecraft-server"></div>
-                    <div class="service"><span>Backup Utility</span><img src="./img/off.svg" class="status" id="backup-utility"></div>
+                    <div class="box vertical spaced">
+                        <div class="service"><span>Status Server</span><img src="./img/offline.svg" class="status" id="status-server"></div>
+                        <div class="service"><span>NoIP Duc</span><img src="./img/off.svg" class="status" id="noip-duc"></div>
+                        <div class="service"><span>Hamachi</span><img src="./img/off.svg" class="status" id="hamachi"></div>
+                        <div class="service"><span>Minecraft Server</span><img src="./img/off.svg" class="status" id="minecraft-server"></div>
+                        <div class="service"><span>Backup Utility</span><img src="./img/off.svg" class="status" id="backup-utility"></div>
+                    </div>
                 </div>
-                <div class="container">
+                <div class="container panel">
                     <div class="box"><h2>Resources</h2><img src="./img/resources.svg" class="icon"></div>
-                    <h3>CPU: <span id="cpu-now">0</span>%</h3>
-                    <div class="resource" id="cpu">
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                    </div>
-                    <h3>RAM: <span id="ram-now">0</span>%</h3>
-                    <div class="resource" id="ram">
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                    </div>
-                    <h3>Swap: <span id="swap-now">0</span>%</h3>
-                    <div class="resource" id="swap">
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
-                        <div class="bar" style="height: 0px"></div>
+                    <div class="box vertical spaced">
+                        <canvas id="cpu"></canvas>
+                        <canvas id="ram-swap"></canvas>
                     </div>
                 </div>
             </div>
-            <div class="box vertical">
-                <div class="container">
+            <div class="box vertical gap">
+                <div class="container panel">
                     <div class="box"><h2>Backups</h2><img src="./img/backups.svg" class="icon"></div>
-                    <div id="backups">
+                    <div class="spaced" id="backups">
                     </div>
                 </div>
-                <div class="container">
+                <div class="container panel">
                     <div class="box"><h2>IPv6</h2><img src="./img/ipv6.svg" class="icon"></div>
-                    <div id="ipv6"></div>
-                </div>
-                <div class="container">
-                    <div class="box"><h2>Drives</h2><img src="./img/drives.svg" class="icon"></div>
-                    <h3>System</h3>
-                    <div class="drive">
-                        <div class="bar horizontal" id="system" style="width: 0px"></div>
+                    <div class="spaced">
+                        <div id="ipv6">Unknown</div>
                     </div>
-                    <h3>Server</h3>
-                    <div class="drive">
-                        <div class="bar horizontal" id="server" style="width: 0px"></div>
+                </div>
+                <div class="container panel">
+                    <div class="box"><h2>Drives</h2><img src="./img/drives.svg" class="icon"></div>
+                    <div class="box vertical spaced">
+                        <div class="box vertical">
+                            <h3>System</h3>
+                            <div class="drive">
+                                <div class="bar horizontal" id="system" style="width: 0px"></div>
+                            </div>
+                        </div>
+                        <div class="box vertical">
+                            <h3>Server</h3>
+                            <div class="drive">
+                                <div class="bar horizontal" id="server" style="width: 0px"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="container">
+            <div class="container panel">
                 <div class="box"><h2>Minecraft Server</h2><img src="./img/favicon.svg" class="icon" id="favicon"></div>
-                <h3>Version</h3>
-                <span id="version">Unknown</span>
-                <h3>MOTD</h3>
-                <span id="motd">Unknown</span>
-                <h3><span id="players-online">0</span>/<span id="players-max">0</span> Players</h3>
-                <div id="players">
+                <div class="box vertical spaced">
+                    <div class="box vertical">
+                        <h3>Version</h3>
+                        <span id="version">Unknown</span>
+                    </div>
+                    <div class="box vertical">
+                        <h3>MOTD</h3>
+                        <span id="motd">Unknown</span>
+                    </div>
+                    <div class="box vertical">
+                        <h3><span id="players-online">0</span>/<span id="players-max">0</span> Players</h3>
+                        <div class="spaced" id="players">
+                        </div>
+                    </div>
+                    <div class="box vertical">
+                        <h3>World</h3>
+                        <span id="world">Unknown</span>
+                    </div>
                 </div>
-                <h3>World</h3>
-                <span id="world">Unknown</span>
-                <h3>Tps Overworld: <span id="tps-overworld-now">0</span></h3>
-                <div class="resource" id="tps-overworld">
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                </div>
-                <h3>Tps Nether: <span id="tps-nether-now">0</span></h3>
-                <div class="resource" id="tps-nether">
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                </div>
-                <h3>Tps End: <span id="tps-end-now">0</span></h3>
-                <div class="resource" id="tps-end">
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
-                    <div class="bar" style="height: 0px"></div>
+                <div class="spaced">
+                    <canvas id="tps"></canvas>
                 </div>
             </div>
         </div>
+        <img src="./img/offline.svg" style="display: none;">
     </body>
 </html>

@@ -1,10 +1,20 @@
-import express, {Express, Request, Response} from 'express';
-import {ExecException} from 'child_process';
-import {ls, ps, df, top, ipv6, status, statusFullQuery, statusTps} from './commands';
-import {FullQueryResponse, JavaStatusResponse} from 'minecraft-server-util';
+import express, { Express, Request, Response } from 'express';
+import { ExecException } from 'child_process';
+import { ls, ps, df, top, ipv6, status, statusFullQuery, statusTps } from './lib/commands';
+import { FullQueryResponse, JavaStatusResponse } from 'minecraft-server-util';
+import bodyParser from 'body-parser';
+import * as fs from 'fs';
+import * as https from 'https';
+import cors from 'cors';
+import helmet from 'helmet';
+import { settings } from './lib/settings';
+import path from 'path';
+import { Server } from 'socket.io';
+import { onConnect } from './lib/socket';
+import { initializeStatus } from './lib/status';
 
 const main: Express = express();
-const port: number = 4000;
+const port: number = settings.https.port;
 
 let buffer: {
   services: {data: {noipDuc: string, hamachi: string, minecraftServer: string, backupUtility: string}, timestamp: number},
@@ -30,52 +40,47 @@ let timeout = {
   fourtySeconds: 4000 * 95 / 100
 };
 
-main.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-});
+main.set('trust proxy', true)
+main.use(bodyParser.urlencoded({extended: true}));
+main.use(bodyParser.json());
+main.use(cors());
+main.use(helmet());
+main.use(helmet.contentSecurityPolicy({
+    useDefaults: false,
+    directives: {
+        "default-src": ["'self'"],
+        "base-uri": "'self'",
+        "font-src": ["'self'", "https:"],
+        "frame-ancestors": ["'self'"],
+        "img-src": ["'self'", "data:"],
+        "object-src": ["'none'"],
+        "script-src": ["'self'", "https:"],
+        "script-src-attr": "'none'",
+        "style-src": ["'self'", "https:", "data:", "'unsafe-inline'"],
+    }
+}));
+main.use('/css', express.static('./pages/css'));
+main.use('/js', express.static('./pages/js'));
+main.use('/img', express.static('./pages/img'));
 
 main.get('/', (req: Request, res: Response) => {
   res.sendFile('./pages/index.html', {root: __dirname});
 });
 
-main.get('/css/style.css', (req: Request, res: Response) => {
-  res.sendFile('./pages/css/style.css', {root: __dirname});
+const options = {
+  key: fs.readFileSync(path.resolve(__dirname, settings.https.key)),
+  cert: fs.readFileSync(path.resolve(__dirname, settings.https.cert)),
+  passphrase: settings.https.passphrase
+};
+export const server = https.createServer(options, main);
+server.listen(port, () => {
+  console.log('Server listening on port ' + port);
 });
 
-main.get('/js/script.js', (req: Request, res: Response) => {
-  res.sendFile('./pages/js/script.js', {root: __dirname});
-});
+const io = new Server(server);
+io.on('connect', onConnect);
 
-main.get('/img/icon.svg', (req: Request, res: Response) => {
-  res.sendFile('./pages/img/icon.svg', {root: __dirname});
-});
-main.get('/img/refresh.svg', (req: Request, res: Response) => {
-  res.sendFile('./pages/img/refresh.svg', {root: __dirname});
-});
-main.get('/img/on.svg', (req: Request, res: Response) => {
-  res.sendFile('./pages/img/on.svg', {root: __dirname});
-});
-main.get('/img/off.svg', (req: Request, res: Response) => {
-  res.sendFile('./pages/img/off.svg', {root: __dirname});
-});
-main.get('/img/services.svg', (req: Request, res: Response) => {
-  res.sendFile('./pages/img/services.svg', {root: __dirname});
-});
-main.get('/img/resources.svg', (req: Request, res: Response) => {
-  res.sendFile('./pages/img/resources.svg', {root: __dirname});
-});
-main.get('/img/backups.svg', (req: Request, res: Response) => {
-  res.sendFile('./pages/img/backups.svg', {root: __dirname});
-});
-main.get('/img/ipv6.svg', (req: Request, res: Response) => {
-  res.sendFile('./pages/img/ipv6.svg', {root: __dirname});
-});
-main.get('/img/drives.svg', (req: Request, res: Response) => {
-  res.sendFile('./pages/img/drives.svg', {root: __dirname});
-});
-main.get('/img/favicon.svg', (req: Request, res: Response) => {
-  res.sendFile('./pages/img/favicon.svg', {root: __dirname});
-});
+initializeStatus();
 
 main.get('/services', (req: Request, res: Response) => {
   let data = buffer.services.data;

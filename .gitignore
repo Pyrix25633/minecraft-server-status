@@ -1,1 +1,9 @@
-dist
+#minecraft-server-status
+settings/settings.json
+certs/
+
+#node
+node_modules/
+
+#bash
+*.sh
