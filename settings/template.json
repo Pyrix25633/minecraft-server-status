@@ -10,6 +10,14 @@
         "rcon": {
             "port": 25575,
             "password": ""
+        },
+        "paths": {
+            "backups": "",
+            "mods": ""
         }
+    },
+    "drives": {
+        "system": "sda",
+        "server": "sdb"
     }
 }

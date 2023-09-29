@@ -12,24 +12,24 @@ function resetClient() {
     } catch(e) {console.log(e);}
 }
 
-export function ps(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
+export function ps(callback: (error: ExecException | null, stdout: string) => void): void {
     exec('ps -A -f', callback);
 }
 
-export function ls(args: string, callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
-    exec('ls ' + args, callback);
-}
-
-export function top(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
+export function top(callback: (error: ExecException | null, stdout: string) => void): void {
     exec('top -b -n 2 |grep -e Cpu -e buff -e Swap |tail -n 3', callback);
 }
 
-export function df(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
-    exec('df -h |grep -e sda4 -e sdb5', callback);
+export function ls(path: string, callback: (error: ExecException | null, stdout: string) => void): void {
+    exec('ls -l -h ' + path, callback);
 }
 
 export function ipv6(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
     exec('ip addr |grep "scope global dynamic mngtmpaddr"', callback);
+}
+
+export function df(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
+    exec('df -h |grep -e ' + settings.drives.system + ' -e ' + settings.drives.server, callback);
 }
 
 export function status(result: (res: util.JavaStatusResponse) => void, error: (err: any) => void): void {

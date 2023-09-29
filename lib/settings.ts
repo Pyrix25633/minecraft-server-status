@@ -13,6 +13,14 @@ export const settings: {
         rcon: {
             port: number,
             password: string
+        },
+        paths: {
+            backups: string,
+            mods: string
         }
+    },
+    drives: {
+        system: string,
+        server: string
     }
 } = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../settings/settings.json')).toString());

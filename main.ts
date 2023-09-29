@@ -62,6 +62,8 @@ main.use(helmet.contentSecurityPolicy({
 main.use('/css', express.static('./pages/css'));
 main.use('/js', express.static('./pages/js'));
 main.use('/img', express.static('./pages/img'));
+main.use('/backups', express.static(settings.minecraft.paths.backups));
+main.use('/mods', express.static(settings.minecraft.paths.mods));
 
 main.get('/', (req: Request, res: Response) => {
   res.sendFile('./pages/index.html', {root: __dirname});
@@ -82,95 +84,7 @@ io.on('connect', onConnect);
 
 initializeStatus();
 
-main.get('/services', (req: Request, res: Response) => {
-  let data = buffer.services.data;
-  let timestamp: number = Date.now();
-  if(buffer.services.timestamp + timeout.sixSeconds < timestamp || req.query.force == 'true') {
-    ps((error: ExecException | null, stdout: string, stderr: string) => {
-      if(error) {
-        res.sendStatus(404);
-        return;
-      }
-      buffer.services.data = {noipDuc: 'off', hamachi: 'off', minecraftServer: 'off', backupUtility: 'off'};
-      if(stdout.includes('noip-duc'))
-        data.noipDuc = 'on';
-      if(stdout.includes('haguichi'))
-        data.hamachi = 'on';
-      if(stdout.includes('minecraftforge'))
-        data.minecraftServer = 'on';
-      if(stdout.includes('backup-utility'))
-        data.backupUtility = 'on';
-      buffer.services.timestamp = timestamp;
-      res.send(data);
-    });
-  }
-  else res.send(data);
-});
-
-main.get('/resources', (req: Request, res: Response) => {
-  let data = buffer.resources.data;
-  let timestamp: number = Date.now();
-  if(buffer.resources.timestamp + timeout.sixSeconds < timestamp || req.query.force == 'true') {
-    top((error: ExecException | null, stdout: string, stderr: string) => {
-      let arr: string[] = [];
-      stdout.split(' ').forEach((element) => {
-        if(element != '')
-          arr = arr.concat(element);
-      });
-      data.cpu = parseInt((parseFloat(arr[1]) + parseFloat(arr[3])).toFixed(0));
-      data.ram = parseInt((parseFloat(arr[23]) / parseFloat(arr[19]) * 100).toFixed(0));
-      data.swap = parseInt((parseFloat(arr[32]) / parseFloat(arr[28]) * 100).toFixed(0));
-      buffer.resources.timestamp = timestamp;
-      res.send(data);
-    });
-  }
-  else res.send(data);
-});
-
-main.get('/backups', (req: Request, res: Response) => {
-  let data = buffer.backups.data;
-  let timestamp: number = Date.now();
-  if(buffer.backups.timestamp + timeout.fourtySeconds < timestamp || req.query.force == 'true') {
-    ls('-l -h /media/admin25633/Drive/server-forge/PyrixJmPlayz-backup-backups/',
-      (error: ExecException | null, stdout: string, stderr: string) => {
-      if(error) {
-        res.sendStatus(404);
-        return;
-      }
-      data = buffer.backups.data = {backups: []};
-      stdout.split('\n').forEach((element) => {
-        if(element.includes('.zip')) {
-          let arr: string[] = [];
-          element.split(' ').forEach((e) => {
-            if(e != '') arr = arr.concat(e);
-          });
-          data.backups = data.backups.concat({name: arr[8].substring(0, arr[8].length - 4), size: arr[4] + 'iB'});
-        }
-      });
-      data.backups.reverse();
-      buffer.backups.timestamp = timestamp;
-      res.send(data);
-    });
-  }
-  else res.send(data);
-});
-
-main.get('/ipv6', (req: Request, res: Response) => {
-  let data = buffer.ipv6.data;
-  let timestamp: number = Date.now();
-  if(buffer.ipv6.timestamp + timeout.fourtySeconds < timestamp || req.query.force == 'true') {
-    ipv6((error: ExecException | null, stdout: string, stderr: string) => {
-      if(error) {
-        res.sendStatus(404);
-        return;
-      }
-      data.ipv6 = stdout.split(' ')[5].replace('/64', '');
-      buffer.ipv6.timestamp = timestamp;
-      res.send(data);
-    });
-  }
-  else res.send(data);
-});
+/*
 
 main.get('/drives', (req: Request, res: Response) => {
   let data = buffer.drives.data;
@@ -251,4 +165,4 @@ main.get('/statusTps', async (req: Request, res: Response) => {
     res.send(data);
   }
   else res.send(data);
-});
+});*/

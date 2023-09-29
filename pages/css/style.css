@@ -2,6 +2,7 @@
     --color-light: #DDDDDD;
     --color-panel: #333333;
     --color-dark: #222222;
+    --color-link: #68BBE3;
 }
 
 body {
@@ -15,6 +16,10 @@ h1 {
 }
 h2, h3 {
     margin: 0;
+}
+a {
+    color: var(--color-link);
+    text-decoration: none;
 }
 hr {
     color: var(--color-light);
@@ -85,12 +90,14 @@ div.box.vertical:not(:first-of-type):not(:last-of-type) {
 canvas {
     border-radius: 7px;
     background-color: var(--color-dark);
+    height: 200px;
 }
 
 div.service {
     width: 190px;
     border-radius: 5px;
     padding-left: 6px;
+    padding-right: 4px;
     background-color: var(--color-dark);
 }
 img.status {
@@ -99,25 +106,27 @@ img.status {
     border-radius: 50%;
 }
 
-div#backups {
+div#backups, div#mods {
     flex-direction: column;
     border: 0;
     padding: 0;
-    max-height: 200px;
+    max-height: 140px;
     overflow-y: scroll;
 }
-div#backups::-webkit-scrollbar-track, div#backups::-webkit-scrollbar, div#backups::-webkit-scrollbar-thumb {
+div#backups::-webkit-scrollbar-track, div#backups::-webkit-scrollbar, div#backups::-webkit-scrollbar-thumb,
+div#mods::-webkit-scrollbar-track, div#mods::-webkit-scrollbar, div#mods::-webkit-scrollbar-thumb {
     display: none;
 }
-div.backup {
+div.backup, div.mod {
     width: auto;
     border-radius: 5px;
     font-size: 13px;
-    padding-left: 4px;
-    padding-right: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: calc(100% - 10px);
     background-color: var(--color-dark);
 }
-div.backup span:not(:first-of-type) {
+div.backup span:not(:first-child), div.mod span:not(:first-child) {
     margin-left: 10px;
 }
 
@@ -135,6 +144,13 @@ div.drive {
     border-radius: 7px;
     padding: 3px;
     background-color: var(--color-dark);
+}
+div.bar.horizontal {
+    background-color: var(--color-light);
+    border: 0;
+    padding: 0;
+    height: 20px;
+    border-radius: 3px;
 }
 
 img#favicon {

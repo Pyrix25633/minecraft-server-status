@@ -3,16 +3,10 @@ const noipDucImg = document.getElementById('noip-duc');
 const hamachiImg = document.getElementById('hamachi');
 const minecraftServerImg = document.getElementById('minecraft-server');
 const backupUtilityImg = document.getElementById('backup-utility');
-const cpuNowSpan = document.getElementById('cpu-now');
-const ramNowSpan = document.getElementById('ram-now');
-const swapNowSpan = document.getElementById('swap-now');
-const cpuDiv = document.getElementById('cpu');
-const ramDiv = document.getElementById('ram');
-const swapDiv = document.getElementById('swap');
-const cpuGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-const ramGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-const swapGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+const cpuCanvas = document.getElementById('cpu');
+const ramSwapCanvas = document.getElementById('ram-swap');
 const backupsDiv = document.getElementById('backups');
+const modsDiv = document.getElementById('mods');
 const ipv6Div = document.getElementById('ipv6');
 const systemDiv = document.getElementById('system');
 const serverDiv = document.getElementById('server');
@@ -23,15 +17,49 @@ const playersMaxSpan = document.getElementById('players-max');
 const playersDiv = document.getElementById('players');
 const worldSpan = document.getElementById('world');
 const faviconImg = document.getElementById('favicon');
-const tpsOverworldNowSpan = document.getElementById('tps-overworld-now');
-const tpsNetherNowSpan = document.getElementById('tps-nether-now');
-const tpsEndNowSpan = document.getElementById('tps-end-now');
-const tpsOverworldDiv = document.getElementById('tps-overworld');
-const tpsNetherDiv = document.getElementById('tps-nether');
-const tpsEndDiv = document.getElementById('tps-end');
-const tpsOverworldGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-const tpsNetherGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-const tpsEndGraph = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+Chart.defaults.backgroundColor = '#222222';
+Chart.defaults.borderColor = '#333333';
+Chart.defaults.color = '#DDDDDD';
+Chart.defaults.font.family = "'Roboto Mono', monospace";
+const percentageSettings = {
+    type: 'line',
+    data: {
+        labels: ['1m', '54s', '48s', '42s', '36s', '30s', '24s', '18s', '12s', '6s', 'now']
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100
+            }
+        }
+    }
+};
+const datasetSettings = {
+    borderWidth: 1,
+    pointStyle: false,
+    tension: 0.3,
+};
+const cpuSettings = JSON.parse(JSON.stringify(percentageSettings));
+const cpuDatasetSettings = JSON.parse(JSON.stringify(datasetSettings));
+cpuDatasetSettings.label = 'CPU',
+cpuDatasetSettings.data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+cpuDatasetSettings.borderColor = '#DDDDDD';
+cpuSettings.data.datasets = [cpuDatasetSettings];
+const ramSwapSettings = JSON.parse(JSON.stringify(percentageSettings));
+const ramDatasetSettings = JSON.parse(JSON.stringify(datasetSettings));
+ramDatasetSettings.label = 'RAM',
+ramDatasetSettings.data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+ramDatasetSettings.borderColor = '#DDDDDD';
+const swapDatasetSettings = JSON.parse(JSON.stringify(datasetSettings));
+swapDatasetSettings.label = 'SWAP',
+swapDatasetSettings.data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+swapDatasetSettings.borderColor = '#68BBE3';
+ramSwapSettings.data.datasets = [ramDatasetSettings, swapDatasetSettings];
+
+const cpuChart = new Chart(cpuCanvas, cpuSettings);
+const ramSwapChart = new Chart(ramSwapCanvas, ramSwapSettings);
 
 const socket = io();
 socket.on('connect', () => {
@@ -46,66 +74,75 @@ socket.on('services', (data) => {
     minecraftServerImg.src = './img/' + (data.minecraftServer ? 'on' : 'off') + '.svg'
     backupUtilityImg.src = './img/' + (data.backupUtility ? 'on' : 'off') + '.svg'
 });
-
-function onLoad() {
-  requestResources();
-  requestBackups();
-  requestIpv6();
-  requestDrives();
-  requestStatus();
-  requestStatusFullQuery();
-  requestStatusTps();
-}
-
-function requestResources(args = '') {
-  $.ajax({
-    url: '/resources' + args,
-    method: 'GET',
-    dataType: 'json',
-    timeout: 4000,
-    success: setResources,
-    error: (req, err) => {
-      console.log(err);
+socket.on('resources-old', (data) => {
+    for(const resources of data) {
+        cpuChart.data.datasets[0].data.push(resources.cpu);
+        cpuChart.data.datasets[0].data.splice(0, 1);
+        ramSwapChart.data.datasets[0].data.push(resources.ram);
+        ramSwapChart.data.datasets[0].data.splice(0, 1);
+        ramSwapChart.data.datasets[1].data.push(resources.swap);
+        ramSwapChart.data.datasets[1].data.splice(0, 1);
     }
-  });
-}
-
-function requestBackups(args = '') {
-  $.ajax({
-    url: '/backups' + args,
-    method: 'GET',
-    dataType: 'json',
-    success: setBackups,
-    error: (req, err) => {
-      console.log(err);
+    cpuChart.update('none');
+    ramSwapChart.update('none');
+});
+socket.on('resources', (data) => {
+    cpuChart.data.datasets[0].data.push(data.cpu);
+    cpuChart.data.datasets[0].data.splice(0, 1);
+    ramSwapChart.data.datasets[0].data.push(data.ram);
+    ramSwapChart.data.datasets[0].data.splice(0, 1);
+    ramSwapChart.data.datasets[1].data.push(data.swap);
+    ramSwapChart.data.datasets[1].data.splice(0, 1);
+    cpuChart.update('none');
+    ramSwapChart.update('none');
+});
+socket.on('backups', (data) => {
+    backupsDiv.innerHTML = '';
+    for(const backup of data) {
+        const backupDiv = document.createElement('div');
+        backupDiv.classList = 'backup';
+        const nameSpan = document.createElement('span');
+        const nameA = document.createElement('a');
+        nameA.href = '/backups/' + backup.name.replace("'", '').replace(' ', '%20');
+        const sizeSpan = document.createElement('span');
+        nameSpan.innerText = backup.name;
+        sizeSpan.innerText = backup.size;
+        nameA.appendChild(nameSpan);
+        backupDiv.appendChild(nameA);
+        backupDiv.appendChild(sizeSpan);
+        backupsDiv.appendChild(backupDiv);
     }
-  });
-}
-
-function requestIpv6(args = '') {
-  $.ajax({
-    url: '/ipv6' + args,
-    method: 'GET',
-    dataType: 'json',
-    success: setIpv6,
-    error: (req, err) => {
-      console.log(err);
+    if(data.length == 0) backupsDiv.style.display = 'none';
+    else backupsDiv.style.display = '';
+});
+socket.on('mods', (data) => {
+    modsDiv.innerHTML = '';
+    for(const mod of data) {
+        const modDiv = document.createElement('div');
+        modDiv.classList = 'mod';
+        const nameSpan = document.createElement('span');
+        const nameA = document.createElement('a');
+        nameA.href = '/mods/' + mod.name.replace("'", '').replace(' ', '%20');
+        const sizeSpan = document.createElement('span');
+        nameSpan.innerText = mod.name;
+        sizeSpan.innerText = mod.size;
+        nameA.appendChild(nameSpan);
+        modDiv.appendChild(nameA);
+        modDiv.appendChild(sizeSpan);
+        modsDiv.appendChild(modDiv);
     }
-  });
-}
+    if(data.length == 0) modsDiv.style.display = 'none';
+    else modsDiv.style.display = '';
+});
+socket.on('ipv6', (data) => {
+    ipv6Div.innerText = data;
+});
+socket.on('drives', (data) => {
+    systemDiv.style.width = data.system * 3 + 'px';
+    serverDiv.style.width = data.server * 3 + 'px';
+});
 
-function requestDrives(args = '') {
-  $.ajax({
-    url: '/drives' + args,
-    method: 'GET',
-    dataType: 'json',
-    success: setDrives,
-    error: (req, err) => {
-      console.log(err);
-    }
-  });
-}
-
+/*
 function requestStatus(args = '') {
   $.ajax({
     url: '/status' + args,
@@ -140,60 +177,6 @@ function requestStatusTps(args = '') {
       console.log(err);
     }
   });
-}
-
-setInterval(requestResources, 6000);
-setInterval(requestBackups, 40000);
-setInterval(requestIpv6, 40000);
-setInterval(requestDrives, 40000);
-setInterval(requestStatus, 40000);
-setInterval(requestStatusFullQuery, 6000);
-setInterval(requestStatusTps, 6000);
-
-function setResources(data) {
-  shiftArray(cpuGraph);
-  shiftArray(ramGraph);
-  shiftArray(swapGraph);
-  cpuGraph[9] = data.cpu;
-  ramGraph[9] = data.ram;
-  swapGraph[9] = data.swap;
-  let cpuDivs = cpuDiv.getElementsByTagName('div');
-  let ramDivs = ramDiv.getElementsByTagName('div');
-  let swapDivs = swapDiv.getElementsByTagName('div');
-  cpuNowSpan.innerText = data.cpu;
-  for(let i = 0; i < cpuDivs.length; i++)
-    cpuDivs[i].style.height = cpuGraph[i] + 'px';
-  ramNowSpan.innerText = data.ram;
-  for(let i = 0; i < ramDivs.length; i++)
-    ramDivs[i].style.height = ramGraph[i] + 'px';
-  swapNowSpan.innerText = data.swap;
-  for(let i = 0; i < swapDivs.length; i++)
-    swapDivs[i].style.height = swapGraph[i] / 2 + 'px';
-}
-
-function setBackups(data) {
-  let backups = data.backups;
-  backupsDiv.innerHTML = '';
-  for(let i = 0; i < backups.length; i++) {
-    let backup = document.createElement('div');
-    backup.classList = 'backup';
-    let nameSpan = document.createElement('span');
-    let sizeSpan = document.createElement('span');
-    nameSpan.innerText = backups[i].name;
-    sizeSpan.innerText = backups[i].size;
-    backup.appendChild(nameSpan);
-    backup.appendChild(sizeSpan);
-    backupsDiv.appendChild(backup);
-  }
-}
-
-function setIpv6(data) {
-  ipv6Div.innerText = data.ipv6;
-}
-
-function setDrives(data) {
-  systemDiv.style.width = data.system * 3 + 'px';
-  serverDiv.style.width = data.server * 3 + 'px';
 }
 
 function setStatus(data) {
@@ -240,4 +223,4 @@ function setStatusTps(data) {
 function shiftArray(array) {
   for(let i = 1; i < array.length; i++)
     array[i - 1] = array[i];
-}
+}*/
