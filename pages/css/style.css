@@ -86,6 +86,9 @@ div.box.vertical {
 div.box.vertical:not(:first-of-type):not(:last-of-type) {
     align-items: center;
 }
+div.box.vertical:last-of-type {
+    align-items: end;
+}
 
 canvas {
     border-radius: 7px;
