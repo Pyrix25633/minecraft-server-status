@@ -28,3 +28,5 @@ Run `make generate-certificates`
 ## Starting the server
 
 Run `make`
+
+> In order to get the minecraft server service and tps detected it must be either a Forge server or a Fabric/Quilt server with Carpet mod installed

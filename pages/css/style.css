@@ -121,7 +121,6 @@ div#mods::-webkit-scrollbar-track, div#mods::-webkit-scrollbar, div#mods::-webki
     display: none;
 }
 div.backup, div.mod {
-    width: auto;
     border-radius: 5px;
     font-size: 13px;
     padding-left: 5px;
@@ -133,6 +132,20 @@ div.backup span:not(:first-child), div.mod span:not(:first-child) {
     margin-left: 10px;
 }
 
+div.drive {
+    width: 300px;
+    border-radius: 7px;
+    padding: 3px;
+    background-color: var(--color-dark);
+}
+div.bar {
+    background-color: var(--color-light);
+    border: 0;
+    padding: 0;
+    height: 20px;
+    border-radius: 5px;
+}
+
 div#ipv6 {
     width: auto;
     border-radius: 5px;
@@ -140,20 +153,6 @@ div#ipv6 {
     padding-left: 4px;
     padding-right: 4px;
     background-color: var(--color-dark);
-}
-
-div.drive {
-    width: 300px;
-    border-radius: 7px;
-    padding: 3px;
-    background-color: var(--color-dark);
-}
-div.bar.horizontal {
-    background-color: var(--color-light);
-    border: 0;
-    padding: 0;
-    height: 20px;
-    border-radius: 3px;
 }
 
 img#favicon {
@@ -172,12 +171,20 @@ div#players {
     max-width: 400px;
     border: 0;
     padding: 0;
+    border-radius: 0;
+    gap: 10px;
     justify-content: start;
+    max-height: 140px;
+    overflow-y: scroll;
+}
+div#players::-webkit-scrollbar-track, div#players::-webkit-scrollbar, div#players::-webkit-scrollbar-thumb {
+    display: none;
 }
 div.player {
     width: min-content;
-    border-radius: 5px;
+    border-radius: 5px !important;
     font-size: 13px;
     padding-left: 4px;
     padding-right: 4px;
+    background-color: var(--color-dark);
 }

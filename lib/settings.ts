@@ -16,7 +16,7 @@ export const settings: {
         },
         paths: {
             backups: string,
-            mods: string
+            server: string
         }
     },
     drives: {

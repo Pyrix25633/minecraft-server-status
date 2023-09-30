@@ -32,20 +32,16 @@ export function df(callback: (error: ExecException | null, stdout: string, stder
     exec('df -h |grep -e ' + settings.drives.system + ' -e ' + settings.drives.server, callback);
 }
 
-export function status(result: (res: util.JavaStatusResponse) => void, error: (err: any) => void): void {
-    util.status(settings.minecraft.ip).then((res) => {result(res)}).catch((err) => {error(err)});
+export function statusFullQuery(result: (res: util.FullQueryResponse) => void, error: () => void): void {
+    util.queryFull(settings.minecraft.ip).then(result).catch(error);
 }
 
-export function statusFullQuery(result: (res: util.FullQueryResponse) => void, error: (err: any) => void): void {
-    util.queryFull(settings.minecraft.ip).then((res) => {result(res)}).catch((err) => {error(err)});
-}
-
-export async function statusTps(): Promise<string | undefined> {
+export async function statusTps(server: string): Promise<string | undefined> {
     if(!client.isConnected) try {await client.connect(settings.minecraft.ip, settings.minecraft.rcon.port);} catch(_) {return undefined;}
     if(!client.isLoggedIn) try {await client.login(settings.minecraft.rcon.password);} catch(_) {return undefined;}
     return (async () => {
         try {
-            const message = await client.execute('forge tps');
+            const message = await client.execute(server == 'forge' ? 'forge tps' : 'script run logger(system_info(\'server_last_tick_times\'):0)');
             client.removeAllListeners();
             return message;
         } catch(e) {
