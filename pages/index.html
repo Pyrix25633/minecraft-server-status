@@ -43,12 +43,12 @@
             <div class="box vertical gap">
                 <div class="container panel">
                     <div class="box"><h2>Backups</h2><img src="./img/backups.svg" class="icon"></div>
-                    <div class="spaced" id="backups">
+                    <div class="spaced vertical" id="backups">
                     </div>
                 </div>
                 <div class="container panel">
                     <div class="box"><h2>Mods</h2><img src="./img/mods.svg" class="icon"></div>
-                    <div class="spaced" id="mods">
+                    <div class="spaced vertical" id="mods">
                     </div>
                 </div>
                 <div class="container panel">
@@ -97,8 +97,13 @@
                             <span id="world">Unknown</span>
                         </div>
                     </div>
-                    <div class="spaced">
-                        <canvas id="tps"></canvas>
+                    <div class="box spaced">
+                        <div class="box">
+                            <canvas id="tps" class="small"></canvas>
+                        </div>
+                        <div class="box">
+                            <canvas id="mspt" class="small"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>

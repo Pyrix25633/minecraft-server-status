@@ -57,6 +57,10 @@ div.spaced > div {
     align-items: start !important;
 }
 div.spaced > div:not(:first-child), div.spaced > canvas:not(:first-child) {
+    margin-left: 10px;
+}
+div.spaced.vertical > div:not(:first-child), div.spaced.vertical > canvas:not(:first-child) {
+    margin-left: 0;
     margin-top: 10px;
 }
 div.spaced > div > h3 {
@@ -155,7 +159,7 @@ div#ipv6 {
     background-color: var(--color-dark);
 }
 
-img#favicon {
+img#mc-icon {
     border-radius: 5px;
     margin-left: 10px;
 }
@@ -168,7 +172,7 @@ span#version, span#motd, span#players, span#world {
 div#players {
     flex-direction: row;
     flex-wrap: wrap;
-    max-width: 400px;
+    max-width: 600px;
     border: 0;
     padding: 0;
     border-radius: 0;
@@ -187,4 +191,8 @@ div.player {
     padding-left: 4px;
     padding-right: 4px;
     background-color: var(--color-dark);
+}
+
+canvas.small {
+    width: 350px;
 }

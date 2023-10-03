@@ -10,13 +10,15 @@ const modsDiv = document.getElementById('mods');
 const systemDiv = document.getElementById('system');
 const serverDiv = document.getElementById('server');
 const ipv6Div = document.getElementById('ipv6');
+const mcIconImg = document.getElementById('mc-icon');
 const versionSpan = document.getElementById('version');
 const motdSpan = document.getElementById('motd')
 const playersOnlineSpan = document.getElementById('players-online');
 const playersMaxSpan = document.getElementById('players-max');
 const playersDiv = document.getElementById('players');
 const worldSpan = document.getElementById('world');
-const mcIconImg = document.getElementById('mc-icon');
+const tpsCanvas = document.getElementById('tps');
+const msptCanvas = document.getElementById('mspt');
 
 Chart.defaults.backgroundColor = '#222222';
 Chart.defaults.borderColor = '#333333';
@@ -31,7 +33,35 @@ const percentageSettings = {
         scales: {
             y: {
                 beginAtZero: true,
-                max: 100
+                suggestedMax: 100
+            }
+        }
+    }
+};
+const tpsSettings = {
+    type: 'line',
+    data: {
+        labels: ['1m', '54s', '48s', '42s', '36s', '30s', '24s', '18s', '12s', '6s', 'now']
+    },
+    options: {
+        scales: {
+            y: {
+                suggestedMin: 18,
+                suggestedMax: 20
+            }
+        }
+    }
+};
+const msptSettings = {
+    type: 'line',
+    data: {
+        labels: ['1m', '54s', '48s', '42s', '36s', '30s', '24s', '18s', '12s', '6s', 'now']
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                suggestedMax: 15
             }
         }
     }
@@ -39,7 +69,7 @@ const percentageSettings = {
 const datasetSettings = {
     borderWidth: 1,
     pointStyle: false,
-    tension: 0.3,
+    tension: 0.3
 };
 const cpuSettings = JSON.parse(JSON.stringify(percentageSettings));
 const cpuDatasetSettings = JSON.parse(JSON.stringify(datasetSettings));
@@ -60,6 +90,8 @@ ramSwapSettings.data.datasets = [ramDatasetSettings, swapDatasetSettings];
 
 const cpuChart = new Chart(cpuCanvas, cpuSettings);
 const ramSwapChart = new Chart(ramSwapCanvas, ramSwapSettings);
+const tpsChart = new Chart(tpsCanvas, tpsSettings);
+const msptChart = new Chart(msptCanvas, msptSettings);
 
 const socket = io();
 socket.on('connect', () => {
@@ -158,4 +190,28 @@ socket.on('minecraft', (data) => {
     if(data.players.list.length == 0) playersDiv.style.display = 'none';
     else playersDiv.style.display = '';
     worldSpan.innerText = data.world;
+});
+socket.on('minecraft-tps-mspt-old', (data) => {
+    tpsChart.data.datasets = [];
+    msptChart.data.datasets = [];
+    for(const key of Object.keys(data.tps)) {
+        const tpsDataset = JSON.parse(JSON.stringify(datasetSettings));
+        const msptDataset = JSON.parse(JSON.stringify(datasetSettings));
+        tpsDataset.label = key.replace('minecraft:', '') + ' TPS';
+        msptDataset.label = key.replace('minecraft:', '') + ' MSPT';
+        tpsDataset.data = data.tps[key];
+        msptDataset.data = data.mspt[key];
+        tpsDataset.borderColor = key == 'Overall' ? '#DDDDDD' :
+            key == 'minecraft:overworld' ? '#70B046' :
+            key == 'minecraft:the_nether' ? '#854242' :
+            key == 'minecraft:the_end' ? '#D5DA94' : '#68BBE3';
+        msptDataset.borderColor = tpsDataset.borderColor;
+        tpsChart.data.datasets.push(tpsDataset);
+        msptChart.data.datasets.push(msptDataset);
+    }
+    tpsChart.update('none');
+    msptChart.update('none');
+});
+socket.on('minecraft-tps-mspt', (data) => {
+    console.log(data);
 });

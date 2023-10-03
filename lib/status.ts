@@ -14,7 +14,8 @@ export let cachedDrives = {system: 0, server: 0};
 export let cachedIPv6 = 'Unknown';
 export let cachedMinecraft: {version: string, motd: string, players: {online: number, max: number, list: string[]}, world: string}
     = {version: 'Unknown', motd: 'Unknown', players: {online: 0, max: 0, list: []}, world: 'Unknown'};
-export let cachedMinecraftTps = 0;
+export let cachedMinecraftTps: any = {};
+export let cachedMinecraftMspt: any = {};
 
 for(let i = 0; i < 11; i++) {
     cachedResourcesArray.push({cpu: 0, ram: 0, swap: 0});
@@ -28,7 +29,7 @@ export function initializeStatus(): void {
     sendDrives();
     sendIPv6();
     sendMinecraft();
-    sendMinecraftTps();
+    sendMinecraftTpsMspt();
 }
 
 function sendServices(): void {
@@ -167,26 +168,63 @@ function sendMinecraft(): void {
     });
 }
 
-async function sendMinecraftTps(): Promise<void> {
-    setTimeout(sendMinecraftTps, 6000);
-    if(runningServer == null)
-        cachedMinecraftTps = 0;
+async function sendMinecraftTpsMspt(): Promise<void> {
+    setTimeout(sendMinecraftTpsMspt, 6000);
+    if(runningServer == null) {
+        cachedMinecraftTps = {};
+        cachedMinecraftMspt = {};
+        for(const socket of sockets)
+            socket.emit('minecraft-tps-mspt-old', {tps: cachedMinecraftTps, mstp: cachedMinecraftMspt});
+    }
     else {
         const output = await statusTps(runningServer);
-        if(output == undefined) {
-            cachedMinecraftTps = 0;
-        }
-        else {
-            if(runningServer == 'forge') {
-
+        if(output != undefined) {
+            let newData = false;
+            const dataTps: any = {};
+            const dataMspt: any = {};
+            for(const line of output.split('\n')) {
+                const matchDimension = /\((.+)\): Mean tick time: (\d+\.\d+) ms. Mean TPS: (\d+\.\d+)/.exec(line);
+                if(matchDimension != null) {
+                    if(cachedMinecraftTps[matchDimension[1]] == undefined) {
+                        cachedMinecraftTps[matchDimension[1]] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, parseFloat(matchDimension[3])];
+                        cachedMinecraftMspt[matchDimension[1]] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, parseFloat(matchDimension[2])];
+                        newData = true;
+                    }
+                    else {
+                        const tps = matchDimension[3];
+                        const mspt = matchDimension[2];
+                        cachedMinecraftTps[matchDimension[1]].push(tps);
+                        cachedMinecraftTps[matchDimension[1]].splice(0, 1);
+                        cachedMinecraftMspt[matchDimension[1]].push(mspt);
+                        cachedMinecraftMspt[matchDimension[1]].splice(0, 1);
+                        dataTps[matchDimension[1]] = tps;
+                        dataMspt[matchDimension[1]] = mspt;
+                    }
+                    continue;
+                }
+                const matchOverall = /Overall: Mean tick time: (\d+\.\d+) ms. Mean TPS: (\d+\.\d+)/.exec(line);
+                if(matchOverall != null) {
+                    if(cachedMinecraftTps['Overall'] == undefined) {
+                        cachedMinecraftTps['Overall'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, parseFloat(matchOverall[2])];
+                        cachedMinecraftMspt['Overall'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, parseFloat(matchOverall[1])];
+                        newData = true;
+                    }
+                    else {
+                        const tps = matchOverall[2];
+                        const mspt = matchOverall[1];
+                        cachedMinecraftTps['Overall'].push(tps);
+                        cachedMinecraftTps['Overall'].splice(0, 1);
+                        cachedMinecraftMspt['Overall'].push(mspt);
+                        cachedMinecraftMspt['Overall'].splice(0, 1);
+                        dataTps['Overall'] = tps;
+                        dataMspt['Overall'] = mspt;
+                    }
+                }
             }
-            else {
-                const match = /(\d+\.\d+)/.exec(output);
-                if(match != null) cachedMinecraftTps = parseFloat(match[1]);
-                else cachedMinecraftTps = 0;
+            for(const socket of sockets) {
+                if(newData) socket.emit('minecraft-tps-mspt-old', {tps: cachedMinecraftTps, mspt: cachedMinecraftMspt});
+                else socket.emit('minecraft-tps-mspt', {tps: dataTps, mspt: dataMspt});
             }
         }
     }
-    for(const socket of sockets)
-        socket.emit('minecraft-tps', cachedMinecraftTps);
 }

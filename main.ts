@@ -41,7 +41,7 @@ main.use('/mods', express.static(path.join(settings.minecraft.paths.server, 'mod
 main.get('/mc-icon', (req: Request, res: Response) => {
     const file = path.join(settings.minecraft.paths.server, 'server-icon.png');
     if(runningServer == null || !fs.existsSync(file))
-        res.sendFile('./pages/index.html', {root: __dirname});
+        res.sendFile('./pages/img/mc-icon.svg', {root: __dirname});
     else
         res.sendFile(file);
 });

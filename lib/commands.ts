@@ -41,7 +41,7 @@ export async function statusTps(server: string): Promise<string | undefined> {
     if(!client.isLoggedIn) try {await client.login(settings.minecraft.rcon.password);} catch(_) {return undefined;}
     return (async () => {
         try {
-            const message = await client.execute(server == 'forge' ? 'forge tps' : 'script run logger(system_info(\'server_last_tick_times\'):0)');
+            const message = await client.execute(server + ' tps');
             client.removeAllListeners();
             return message;
         } catch(e) {
