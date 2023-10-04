@@ -35,8 +35,12 @@
                 <div class="container panel">
                     <div class="box"><h2>Resources</h2><img src="./img/resources.svg" class="icon"></div>
                     <div class="box vertical spaced">
-                        <canvas id="cpu"></canvas>
-                        <canvas id="ram-swap"></canvas>
+                        <div class="box chart">
+                            <canvas id="cpu"></canvas>
+                        </div>
+                        <div class="box chart">
+                            <canvas id="ram-swap"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,11 +102,11 @@
                         </div>
                     </div>
                     <div class="box spaced">
-                        <div class="box">
-                            <canvas id="tps" class="small"></canvas>
+                        <div class="box chart-small">
+                            <canvas id="tps"></canvas>
                         </div>
-                        <div class="box">
-                            <canvas id="mspt" class="small"></canvas>
+                        <div class="box chart-small">
+                            <canvas id="mspt"></canvas>
                         </div>
                     </div>
                 </div>

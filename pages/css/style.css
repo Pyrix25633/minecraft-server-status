@@ -20,6 +20,7 @@ h2, h3 {
 a {
     color: var(--color-link);
     text-decoration: none;
+    height: 19px;
 }
 hr {
     color: var(--color-light);
@@ -80,6 +81,7 @@ div.box {
 }
 div#main-box {
     min-height: 85vh;
+    gap: 20px;
 }
 div.box.gap {
     gap: 20px;
@@ -97,7 +99,13 @@ div.box.vertical:last-of-type {
 canvas {
     border-radius: 7px;
     background-color: var(--color-dark);
-    height: 200px;
+}
+div.chart {
+    width: 400px;
+}
+div.chart-small {
+    height: 250px;
+    width: 350px;
 }
 
 div.service {
@@ -134,6 +142,11 @@ div.backup, div.mod {
 }
 div.backup span:not(:first-child), div.mod span:not(:first-child) {
     margin-left: 10px;
+}
+div.backup a, div.mod a {
+    max-width: 255px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 div.drive {
@@ -193,6 +206,26 @@ div.player {
     background-color: var(--color-dark);
 }
 
-canvas.small {
-    width: 350px;
+@media screen and (max-width: 1700px) {
+    div.chart {
+        width: 300px;
+    }
+    div.chart-small {
+        height: 300px;
+        width: 250px;
+    }
+    @media screen and (max-width: 1300px) {
+        div#main-box {
+            flex-direction: column;
+        }
+        div.gap {
+            flex-direction: row !important;
+        }
+        @media screen and (max-width: 1050px) {
+            div.gap {
+                flex-direction: column !important;
+                align-items: center !important;
+            }
+        }
+    }
 }

@@ -49,7 +49,11 @@ const tpsSettings = {
                 suggestedMin: 18,
                 suggestedMax: 20
             }
-        }
+        },
+        plugins: {
+            title: {display: true, text: 'Ticks Per Second'}
+        },
+        maintainAspectRatio: false
     }
 };
 const msptSettings = {
@@ -63,7 +67,11 @@ const msptSettings = {
                 beginAtZero: true,
                 suggestedMax: 15
             }
-        }
+        },
+        plugins: {
+            title: {display: true, text: 'MilliSeconds Per Tick'}
+        },
+        maintainAspectRatio: false
     }
 };
 const datasetSettings = {
@@ -197,8 +205,8 @@ socket.on('minecraft-tps-mspt-old', (data) => {
     for(const key of Object.keys(data.tps)) {
         const tpsDataset = JSON.parse(JSON.stringify(datasetSettings));
         const msptDataset = JSON.parse(JSON.stringify(datasetSettings));
-        tpsDataset.label = key.replace('minecraft:', '') + ' TPS';
-        msptDataset.label = key.replace('minecraft:', '') + ' MSPT';
+        tpsDataset.label = key;
+        msptDataset.label = key;
         tpsDataset.data = data.tps[key];
         msptDataset.data = data.mspt[key];
         tpsDataset.borderColor = key == 'Overall' ? '#DDDDDD' :
@@ -213,5 +221,14 @@ socket.on('minecraft-tps-mspt-old', (data) => {
     msptChart.update('none');
 });
 socket.on('minecraft-tps-mspt', (data) => {
-    console.log(data);
+    for(const dataset of tpsChart.data.datasets) {
+        dataset.data.push(data.tps[dataset.label]);
+        dataset.data.splice(0, 1);
+    }
+    for(const dataset of msptChart.data.datasets) {
+        dataset.data.push(data.mspt[dataset.label]);
+        dataset.data.splice(0, 1);
+    }
+    tpsChart.update('none');
+    msptChart.update('none');
 });

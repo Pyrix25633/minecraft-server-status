@@ -146,7 +146,7 @@ function sendIPv6(): void {
 }
 
 function sendMinecraft(): void {
-    setTimeout(sendMinecraft, 40000);
+    setTimeout(sendMinecraft, 6000);
     statusFullQuery((res: FullQueryResponse): void => {
         cachedMinecraft = {
             version: res.version,
