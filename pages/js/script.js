@@ -51,7 +51,8 @@ const tpsSettings = {
             }
         },
         plugins: {
-            title: {display: true, text: 'Ticks Per Second'}
+            title: {display: true, text: 'Ticks Per Second'},
+            legend: {display: false}
         },
         maintainAspectRatio: false
     }
@@ -69,7 +70,8 @@ const msptSettings = {
             }
         },
         plugins: {
-            title: {display: true, text: 'MilliSeconds Per Tick'}
+            title: {display: true, text: 'MilliSeconds Per Tick'},
+            legend: {display: false}
         },
         maintainAspectRatio: false
     }
