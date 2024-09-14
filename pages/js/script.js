@@ -9,7 +9,7 @@ const backupsDiv = document.getElementById('backups');
 const modsDiv = document.getElementById('mods');
 const systemDiv = document.getElementById('system');
 const serverDiv = document.getElementById('server');
-const ipv6Div = document.getElementById('ipv6');
+const ipDiv = document.getElementById('ip');
 const mcIconImg = document.getElementById('mc-icon');
 const versionSpan = document.getElementById('version');
 const motdSpan = document.getElementById('motd')
@@ -180,14 +180,17 @@ socket.on('drives', (data) => {
     systemDiv.style.width = data.system * 3 + 'px';
     serverDiv.style.width = data.server * 3 + 'px';
 });
-socket.on('ipv6', (data) => {
-    ipv6Div.innerText = data;
+socket.on('ip', (data) => {
+    ipDiv.innerText = data;
 });
 socket.on('minecraft', (data) => {
     versionSpan.innerText = data.version;
     motdSpan.innerHTML = data.motd;
-    mcIconImg.src = '';
-    mcIconImg.src = './mc-icon';
+    if(data.version != 'Unknown')
+        // To prevent caching: add query parameter that is always different
+        mcIconImg.src = './mc-icon?time=' + (new Date().toLocaleString('az-en').replace(', ', '-'));
+    else
+        mcIconImg.src = './mc-icon';
     playersOnlineSpan.innerText = data.players.online;
     playersMaxSpan.innerText = data.players.max;
     playersDiv.innerHTML = '';

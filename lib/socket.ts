@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { cachedBackups, cachedDrives, cachedIPv6, cachedMinecraft, cachedMinecraftMspt, cachedMinecraftTps, cachedMods, cachedResourcesArray, cachedServices } from "./status";
+import { cachedBackups, cachedDrives, cachedIP, cachedMinecraft, cachedMinecraftMspt, cachedMinecraftTps, cachedMods, cachedResourcesArray, cachedServices } from "./status";
 
 export const sockets: Socket[] = [];
 
@@ -9,7 +9,7 @@ export function onConnect(socket: Socket): void {
     socket.emit('backups', cachedBackups);
     socket.emit('mods', cachedMods);
     socket.emit('drives', cachedDrives);
-    socket.emit('ipv6', cachedIPv6);
+    socket.emit('ipv6', cachedIP);
     socket.emit('minecraft', cachedMinecraft);
     socket.emit('minecraft-tps-mspt-old', {tps: cachedMinecraftTps, mspt: cachedMinecraftMspt});
     sockets.push(socket);

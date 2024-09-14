@@ -1,12 +1,12 @@
-import express, { Express, Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import * as fs from 'fs';
-import * as https from 'https';
 import cors from 'cors';
+import express, { Express, Request, Response } from 'express';
+import * as fs from 'fs';
 import helmet from 'helmet';
-import { settings } from './lib/settings';
+import * as https from 'https';
 import path from 'path';
 import { Server } from 'socket.io';
+import { settings } from './lib/settings';
 import { onConnect } from './lib/socket';
 import { initializeStatus, runningServer } from './lib/status';
 
@@ -64,22 +64,3 @@ const io = new Server(server);
 io.on('connect', onConnect);
 
 initializeStatus();
-
-/*
-main.get('/statusTps', async (req: Request, res: Response) => {
-  let data = buffer.statusTps.data;
-  let timestamp: number = Date.now();
-  if((buffer.statusTps.timestamp + timeout.sixSeconds < timestamp || req.query.force == 'true')) {
-    let output = await statusTps();
-    if(output != undefined) {
-      let array = output.split('Mean TPS: ');
-      data.overworld = parseFloat(array[1].substring(0, 6));
-      data.end = parseFloat(array[2].substring(0, 6));
-      data.nether = parseFloat(array[3].substring(0, 6));
-    }
-    else buffer.statusTps.data = {overworld: 0, nether: 0, end: 0};
-    buffer.statusTps.timestamp = timestamp;
-    res.send(data);
-  }
-  else res.send(data);
-});*/

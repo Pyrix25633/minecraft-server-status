@@ -1,4 +1,4 @@
-import child_process, {ExecException} from 'child_process';
+import child_process, { ExecException } from 'child_process';
 import * as util from 'minecraft-server-util';
 import { settings } from './settings';
 const exec = child_process.exec;
@@ -24,8 +24,8 @@ export function ls(path: string, callback: (error: ExecException | null, stdout:
     exec('ls -l -h ' + path, callback);
 }
 
-export function ipv6(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
-    exec('ip addr |grep "scope global dynamic mngtmpaddr"', callback);
+export function ip(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
+    exec('ip addr |grep "scope global dynamic mngtmpaddr" || ip addr |grep "scope global dynamic noprefixroute"', callback);
 }
 
 export function df(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {

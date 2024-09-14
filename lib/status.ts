@@ -1,9 +1,9 @@
 import { ExecException } from "child_process";
-import { sockets } from "./socket";
-import { df, ipv6, ls, ps, statusFullQuery, statusTps, top } from "./commands";
-import { settings } from "./settings";
 import { FullQueryResponse } from "minecraft-server-util";
 import path from "path";
+import { df, ip, ls, ps, statusFullQuery, statusTps, top } from "./commands";
+import { settings } from "./settings";
+import { sockets } from "./socket";
 
 export let cachedServices = {noipDuc: false, hamachi: false, minecraftServer: false, backupUtility: false};
 export let runningServer: string | null = null;
@@ -11,7 +11,7 @@ export const cachedResourcesArray: {cpu: number, ram: number, swap: number}[] = 
 export let cachedBackups: {name: string, size: string}[] = [];
 export let cachedMods: {name: string, size: string}[] = [];
 export let cachedDrives = {system: 0, server: 0};
-export let cachedIPv6 = 'Unknown';
+export let cachedIP = 'Unknown';
 export let cachedMinecraft: {version: string, motd: string, players: {online: number, max: number, list: string[]}, world: string}
     = {version: 'Unknown', motd: 'Unknown', players: {online: 0, max: 0, list: []}, world: 'Unknown'};
 export let cachedMinecraftTps: any = {};
@@ -27,7 +27,7 @@ export function initializeStatus(): void {
     sendBackups();
     sendMods();
     sendDrives();
-    sendIPv6();
+    sendIP();
     sendMinecraft();
     sendMinecraftTpsMspt();
 }
@@ -62,7 +62,7 @@ function sendResources(): void {
     setTimeout(sendResources, 6000);
     top((error: ExecException | null, stdout: string): void => {
         if(!error) {
-            const expr = /(\d{1,4},\d) (?:id|total|used)/gm;
+            const expr = /(\d{1,6},\d) (?:id|total|used)/gm;
             const dataArray: number[] = [];
             for(let match = expr.exec(stdout); match != null; match = expr.exec(stdout))
                 dataArray.push(parseFloat(match[0]));
@@ -132,15 +132,17 @@ function sendDrives(): void {
     });
 }
 
-function sendIPv6(): void {
-    setTimeout(sendIPv6, 40000);
-    ipv6((error: ExecException | null, stdout: string): void => {
+function sendIP(): void {
+    setTimeout(sendIP, 40000);
+    ip((error: ExecException | null, stdout: string): void => {
         if(!error) {
-            const match = /inet6 (.+)\/64/.exec(stdout);
-            if(match != null) cachedIPv6 = match[1];
-            else cachedIPv6 = 'Unknown';
+            let match = /inet6 (.+)\/64/.exec(stdout);
+            if(match != null) cachedIP = match[1];
+            else match = /inet (.+)\/\d+/.exec(stdout);
+            if(match != null) cachedIP = match[1];
+            else cachedIP = 'Unknown';
             for(const socket of sockets)
-                socket.emit('ipv6', cachedIPv6);
+                socket.emit('ip', cachedIP);
         }
     });
 }
