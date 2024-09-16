@@ -176,7 +176,7 @@ img#mc-icon {
     border-radius: 5px;
     margin-left: 10px;
 }
-span#version, span#motd, span#players, span#world {
+span#version, span#motd, span#players, span#world, span#seed {
     width: fit-content;
     padding: 2px 6px;
     border-radius: 5px;

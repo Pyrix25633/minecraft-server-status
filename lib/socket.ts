@@ -9,7 +9,7 @@ export function onConnect(socket: Socket): void {
     socket.emit('backups', cachedBackups);
     socket.emit('mods', cachedMods);
     socket.emit('drives', cachedDrives);
-    socket.emit('ipv6', cachedIP);
+    socket.emit('ip', cachedIP);
     socket.emit('minecraft', cachedMinecraft);
     socket.emit('minecraft-tps-mspt-old', {tps: cachedMinecraftTps, mspt: cachedMinecraftMspt});
     sockets.push(socket);

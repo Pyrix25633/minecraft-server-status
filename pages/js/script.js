@@ -7,8 +7,8 @@ const cpuCanvas = document.getElementById('cpu');
 const ramSwapCanvas = document.getElementById('ram-swap');
 const backupsDiv = document.getElementById('backups');
 const modsDiv = document.getElementById('mods');
-const systemDiv = document.getElementById('system');
-const serverDiv = document.getElementById('server');
+const serverDriveDiv = document.getElementById('server-drive');
+const backupsDriveDiv = document.getElementById('backups-drive');
 const ipDiv = document.getElementById('ip');
 const mcIconImg = document.getElementById('mc-icon');
 const versionSpan = document.getElementById('version');
@@ -17,6 +17,7 @@ const playersOnlineSpan = document.getElementById('players-online');
 const playersMaxSpan = document.getElementById('players-max');
 const playersDiv = document.getElementById('players');
 const worldSpan = document.getElementById('world');
+const seedSpan = document.getElementById('seed');
 const tpsCanvas = document.getElementById('tps');
 const msptCanvas = document.getElementById('mspt');
 
@@ -177,8 +178,8 @@ socket.on('mods', (data) => {
     else modsDiv.style.display = '';
 });
 socket.on('drives', (data) => {
-    systemDiv.style.width = data.system * 3 + 'px';
-    serverDiv.style.width = data.server * 3 + 'px';
+    serverDriveDiv.style.width = data.server * 3 + 'px';
+    backupsDriveDiv.style.width = data.backups * 3 + 'px';
 });
 socket.on('ip', (data) => {
     ipDiv.innerText = data;
@@ -188,9 +189,9 @@ socket.on('minecraft', (data) => {
     motdSpan.innerHTML = data.motd;
     if(data.version != 'Unknown')
         // To prevent caching: add query parameter that is always different
-        mcIconImg.src = './mc-icon?time=' + (new Date().toLocaleString('az-en').replace(', ', '-'));
+        mcIconImg.src = '/mc-icon?time=' + (new Date().toLocaleString('az-en').replace(', ', '-'));
     else
-        mcIconImg.src = './mc-icon';
+        mcIconImg.src = '/img/mc-icon.svg';
     playersOnlineSpan.innerText = data.players.online;
     playersMaxSpan.innerText = data.players.max;
     playersDiv.innerHTML = '';
@@ -203,6 +204,10 @@ socket.on('minecraft', (data) => {
     if(data.players.list.length == 0) playersDiv.style.display = 'none';
     else playersDiv.style.display = '';
     worldSpan.innerText = data.world;
+    if(data.version != 'Unknown')
+        seedSpan.innerHTML = '<a href="https://mcseedmap.net/' + data.version + '-Java/' + data.seed + '" target="_blank">' + data.seed + '</a>';
+    else
+        seedSpan.innerHTML = data.seed;
 });
 socket.on('minecraft-tps-mspt-old', (data) => {
     tpsChart.data.datasets = [];

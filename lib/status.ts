@@ -1,7 +1,7 @@
 import { ExecException } from "child_process";
 import { FullQueryResponse } from "minecraft-server-util";
 import path from "path";
-import { df, ip, ls, ps, statusFullQuery, statusTps, top } from "./commands";
+import { df, ip, ls, ps, statusFullQuery, statusSeed, statusTps, top } from "./commands";
 import { settings } from "./settings";
 import { sockets } from "./socket";
 
@@ -10,12 +10,13 @@ export let runningServer: string | null = null;
 export const cachedResourcesArray: {cpu: number, ram: number, swap: number}[] = [];
 export let cachedBackups: {name: string, size: string}[] = [];
 export let cachedMods: {name: string, size: string}[] = [];
-export let cachedDrives = {system: 0, server: 0};
-export let cachedIP = 'Unknown';
-export let cachedMinecraft: {version: string, motd: string, players: {online: number, max: number, list: string[]}, world: string}
-    = {version: 'Unknown', motd: 'Unknown', players: {online: 0, max: 0, list: []}, world: 'Unknown'};
-export let cachedMinecraftTps: any = {};
-export let cachedMinecraftMspt: any = {};
+export let cachedDrives: {server: number, backups: number} = {server: 0, backups: 0};
+export let cachedIP: string = 'Unknown';
+export let cachedMinecraft: {version: string, motd: string, players: {online: number, max: number, list: string[]}, world: string, seed: string}
+    = {version: 'Unknown', motd: 'Unknown', players: {online: 0, max: 0, list: []}, world: 'Unknown', seed: 'Unknown'};
+export let cachedSeed: string = 'Unknown';
+export let cachedMinecraftTps: {[index: string]: number[]} = {};
+export let cachedMinecraftMspt: {[index: string]: number[]} = {};
 
 for(let i = 0; i < 11; i++) {
     cachedResourcesArray.push({cpu: 0, ram: 0, swap: 0});
@@ -124,8 +125,8 @@ function sendDrives(): void {
     df((error: ExecException | null, stdout: string): void => {
         if(!error) {
             const match = /(\d{1,3})%.*\n.* (\d{1,3})%/m.exec(stdout);
-            if(match != null) cachedDrives = {system: parseInt(match[1]), server: parseInt(match[2])};
-            else cachedDrives = {system: 0, server: 0};
+            if(match != null) cachedDrives = {server: parseInt(match[1]), backups: parseInt(match[2])};
+            else cachedDrives = {server: 0, backups: 0};
             for(const socket of sockets)
                 socket.emit('drives', cachedDrives);
         }
@@ -150,24 +151,40 @@ function sendIP(): void {
 function sendMinecraft(): void {
     setTimeout(sendMinecraft, 6000);
     statusFullQuery((res: FullQueryResponse): void => {
+        if(cachedMinecraft.motd != res.motd.html)
+            cacheMinecraftSeed();
         cachedMinecraft = {
             version: res.version,
             motd: res.motd.html,
             players: res.players,
-            world: res.map
+            world: res.map,
+            seed: cachedSeed
         };
         for(const socket of sockets)
             socket.emit('minecraft', cachedMinecraft);
     }, () => {
+        if(cachedMinecraft.motd != 'Unknown')
+            cacheMinecraftSeed();
         cachedMinecraft = {
             version: 'Unknown',
             motd: 'Unknown',
             players: {online: 0, max: 0, list: []},
-            world: 'Unknown'
+            world: 'Unknown',
+            seed: cachedSeed
         };
         for(const socket of sockets)
             socket.emit('minecraft', cachedMinecraft);
     });
+}
+
+async function cacheMinecraftSeed(): Promise<void> {
+    const output = await statusSeed();
+    if(output != undefined) {
+        const match = /Seed: \[(.+)\]/.exec(output);
+        if(match == null) cachedSeed = 'Unknown';
+        else cachedSeed = match[1];
+    }
+    else cachedSeed = 'Unknown';
 }
 
 async function sendMinecraftTpsMspt(): Promise<void> {
@@ -193,8 +210,8 @@ async function sendMinecraftTpsMspt(): Promise<void> {
                         newData = true;
                     }
                     else {
-                        const tps = matchDimension[3];
-                        const mspt = matchDimension[2];
+                        const tps = parseFloat(matchDimension[3]);
+                        const mspt = parseFloat(matchDimension[2]);
                         cachedMinecraftTps[matchDimension[1]].push(tps);
                         cachedMinecraftTps[matchDimension[1]].splice(0, 1);
                         cachedMinecraftMspt[matchDimension[1]].push(mspt);
@@ -212,8 +229,8 @@ async function sendMinecraftTpsMspt(): Promise<void> {
                         newData = true;
                     }
                     else {
-                        const tps = matchOverall[2];
-                        const mspt = matchOverall[1];
+                        const tps = parseFloat(matchOverall[2]);
+                        const mspt = parseFloat(matchOverall[1]);
                         cachedMinecraftTps['Overall'].push(tps);
                         cachedMinecraftTps['Overall'].splice(0, 1);
                         cachedMinecraftMspt['Overall'].push(mspt);

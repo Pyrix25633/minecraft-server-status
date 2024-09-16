@@ -29,7 +29,7 @@ export function ip(callback: (error: ExecException | null, stdout: string, stder
 }
 
 export function df(callback: (error: ExecException | null, stdout: string, stderr: string) => void): void {
-    exec('df -h |grep -e ' + settings.drives.system + ' -e ' + settings.drives.server, callback);
+    exec('df -h |grep -e ' + settings.drives.server + ' -e ' + settings.drives.backups, callback);
 }
 
 export function statusFullQuery(result: (res: util.FullQueryResponse) => void, error: () => void): void {
@@ -42,6 +42,20 @@ export async function statusTps(server: string): Promise<string | undefined> {
     return (async () => {
         try {
             const message = await client.execute(server + ' tps');
+            client.removeAllListeners();
+            return message;
+        } catch(e) {
+            return undefined;
+        }
+    })();
+}
+
+export async function statusSeed(): Promise<string | undefined> {
+    if(!client.isConnected) try {await client.connect(settings.minecraft.ip, settings.minecraft.rcon.port);} catch(_) {return undefined;}
+    if(!client.isLoggedIn) try {await client.login(settings.minecraft.rcon.password);} catch(_) {return undefined;}
+    return (async () => {
+        try {
+            const message = await client.execute('seed');
             client.removeAllListeners();
             return message;
         } catch(e) {

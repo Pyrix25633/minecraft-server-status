@@ -1,12 +1,13 @@
-import path from 'path';
 import * as fs from 'fs';
+import path from 'path';
 
 export const settings: {
     https: {
         cert: string,
         key: string,
         passphrase: string,
-        port: number
+        port: number,
+        upgradePort: number
     },
     minecraft: {
         ip: string,
@@ -20,7 +21,7 @@ export const settings: {
         }
     },
     drives: {
-        system: string,
-        server: string
+        server: string,
+        backups: string
     }
 } = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../settings/settings.json')).toString());

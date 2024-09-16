@@ -3,6 +3,7 @@ import cors from 'cors';
 import express, { Express, Request, Response } from 'express';
 import * as fs from 'fs';
 import helmet from 'helmet';
+import * as http from 'http';
 import * as https from 'https';
 import path from 'path';
 import { Server } from 'socket.io';
@@ -11,7 +12,7 @@ import { onConnect } from './lib/socket';
 import { initializeStatus, runningServer } from './lib/status';
 
 const main: Express = express();
-const port: number = settings.https.port;
+const upgradeMain: Express = express();
 
 main.set('trust proxy', true)
 main.use(bodyParser.urlencoded({extended: true}));
@@ -56,8 +57,15 @@ const options = {
     passphrase: settings.https.passphrase
 };
 export const server = https.createServer(options, main);
-server.listen(port, () => {
-    console.log('Server listening on port ' + port);
+server.listen(settings.https.port, () => {
+    console.log('Server listening on port ' + settings.https.port);
+});
+upgradeMain.all('*', (req, res): void => {
+    res.redirect(301, 'https://' + req.hostname + req.url);
+});
+const upgradeServer = http.createServer(upgradeMain);
+upgradeServer.listen(settings.https.upgradePort, (): void => {
+    console.log('Upgrade Server listening on Port ' + settings.https.upgradePort);
 });
 
 const io = new Server(server);

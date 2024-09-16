@@ -3,7 +3,8 @@
         "cert": "",
         "key": "",
         "passphrase": "",
-        "port": 443
+        "port": 4443,
+        "upgradePort": 8080
     },
     "minecraft": {
         "ip": "127.0.0.1",
@@ -12,8 +13,8 @@
             "password": ""
         },
         "paths": {
-            "backups": "",
-            "server": ""
+            "server": "",
+            "backups": ""
         }
     },
     "drives": {
